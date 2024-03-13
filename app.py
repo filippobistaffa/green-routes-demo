@@ -45,8 +45,8 @@ def plot_route(fig, X, Y, name='Route', color='blue', zoom=15):
 if __name__ == "__main__":
 
     parser = ap.ArgumentParser()
-    parser.add_argument('--origin', type=float, nargs=2, default=[41.4013741, 2.1552681])
-    parser.add_argument('--destination', type=float, nargs=2, default=[41.4107595, 2.1433257])
+    parser.add_argument('--origin', type=str)
+    parser.add_argument('--destination', type=str)
     parser.add_argument('--place', type=str, default='Barcelona, Spain')
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     parser.add_argument('--zoom', type=int, default=15)
@@ -58,8 +58,10 @@ if __name__ == "__main__":
     G = ox.graph_from_place(args.place, network_type='walk')
 
     # compute nodes of origin and destination points
-    origin_node = ox.nearest_nodes(G, args.origin[1], args.origin[0]) 
-    destination_node = ox.nearest_nodes(G, args.destination[1], args.destination[0])
+    origin_point = ox.geocode(args.origin)
+    destination_point = ox.geocode(args.destination)
+    origin_node = ox.nearest_nodes(G, origin_point[1], origin_point[0])
+    destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
 
     # compute shortest route
     shortest_distace, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
@@ -73,14 +75,14 @@ if __name__ == "__main__":
 
     # show the routes
     fig = go.Figure()
-    plot_markers(fig, args.origin, args.destination)
+    plot_markers(fig, origin_point, destination_point)
     plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distace:.0f} m)', 'blue')
     fig.update_layout(
         mapbox_style = args.style,
         mapbox_zoom = args.zoom,
         mapbox_center = {
-            'lat': (args.origin[0] + args.destination[0]) / 2,
-            'lon': (args.origin[1] + args.destination[1]) / 2
+            'lat': (origin_point[0] + destination_point[0]) / 2,
+            'lon': (origin_point[1] + destination_point[1]) / 2
         }
     )
     fig.show()
