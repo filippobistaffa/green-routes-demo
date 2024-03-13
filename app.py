@@ -30,7 +30,7 @@ def plot_markers(fig, origin, destination):
     ))
 
 
-def plot_path(fig, X, Y, name='Path', color='blue', zoom=15):
+def plot_route(fig, X, Y, name='Route', color='blue', zoom=15):
 
     fig.add_trace(go.Scattermapbox(
         lon = X,
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # compute shortest route
     _, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node)
     shortest_distace = nx.path_weight(G, shortest_route, weight='length')
-    print(f'Shortest path total distance: {shortest_distace}')
+    print(f'Shortest route total distance: {shortest_distace}')
     shortest_X = []
     shortest_Y = []
     for i in shortest_route:
@@ -72,10 +72,10 @@ if __name__ == "__main__":
         shortest_X.append(point['x'])
         shortest_Y.append(point['y'])
 
-    # show the paths
+    # show the routes
     fig = go.Figure()
     plot_markers(fig, args.origin, args.destination)
-    plot_path(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distace:.0f} m)', 'blue')
+    plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distace:.0f} m)', 'blue')
     fig.update_layout(
         mapbox_style = args.style,
         mapbox_zoom = args.zoom,
