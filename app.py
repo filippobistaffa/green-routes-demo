@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # show the paths
     fig = go.Figure()
     plot_markers(fig, args.origin, args.destination)
-    plot_path(fig, shortest_X, shortest_Y, 'Shortest', 'blue')
+    plot_path(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distace:.0f} m)', 'blue')
     fig.update_layout(
         mapbox_style = args.style,
         mapbox_zoom = args.zoom,
