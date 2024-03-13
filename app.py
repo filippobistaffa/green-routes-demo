@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('--origin', type=float, nargs=2, default=[41.4013741, 2.1552681])
     parser.add_argument('--destination', type=float, nargs=2, default=[41.4107595, 2.1433257])
     parser.add_argument('--place', type=str, default='Barcelona, Spain')
-    parser.add_argument('--style', type=str, default='carto-positron')
+    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     parser.add_argument('--zoom', type=int, default=15)
     args, additional = parser.parse_known_args()
 
