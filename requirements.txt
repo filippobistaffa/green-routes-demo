@@ -1,4 +1,5 @@
 osmnx
 plotly
+planar
 matplotlib
 scikit-learn
