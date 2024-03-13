@@ -62,7 +62,9 @@ if __name__ == "__main__":
     destination_node = ox.nearest_nodes(G, args.destination[1], args.destination[0])
 
     # compute shortest route
-    shortest_length, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node)
+    _, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node)
+    shortest_distace = nx.path_weight(G, shortest_route, weight='length')
+    print(f'Shortest path total distance: {shortest_distace}')
     shortest_X = []
     shortest_Y = []
     for i in shortest_route:
