@@ -53,6 +53,8 @@ if __name__ == "__main__":
     args, additional = parser.parse_known_args()
 
     # obtain map from OpenStreetMap
+    ox.settings.use_cache = True
+    ox.settings.log_console = True
     G = ox.graph_from_place(args.place, network_type='walk')
 
     # compute nodes of origin and destination points
