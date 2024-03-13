@@ -5,13 +5,11 @@ import osmnx as ox
 import numpy as np
 
 
-def plot_path(origin_point, destination_point, X, Y, name='Path', color='blue', zoom=15):
-
-    fig = go.Figure()
+def plot_markers(fig, origin, destination):
 
     fig.add_trace(go.Scattermapbox(
-        lat = [origin_point[0]],
-        lon = [origin_point[1]],
+        lat = [origin[0]],
+        lon = [origin[1]],
         mode = 'markers',
         marker = go.scattermapbox.Marker(
             size = 14,
@@ -21,8 +19,8 @@ def plot_path(origin_point, destination_point, X, Y, name='Path', color='blue', 
     ))
 
     fig.add_trace(go.Scattermapbox(
-        lat = [destination_point[0]],
-        lon = [destination_point[1]],
+        lat = [destination[0]],
+        lon = [destination[1]],
         mode = 'markers',
         marker = go.scattermapbox.Marker(
             size = 14,
@@ -30,6 +28,9 @@ def plot_path(origin_point, destination_point, X, Y, name='Path', color='blue', 
         ),
         name = 'Destination'
     ))
+
+
+def plot_path(fig, X, Y, name='Path', color='blue', zoom=15):
 
     fig.add_trace(go.Scattermapbox(
         lon = X,
@@ -40,17 +41,6 @@ def plot_path(origin_point, destination_point, X, Y, name='Path', color='blue', 
         line = dict(width = 4.5, color = color)
     ))
 
-    fig.update_layout(
-        mapbox_style = 'carto-positron',
-        mapbox_zoom = zoom,
-        mapbox_center = {
-            'lat': (origin_point[0] + destination_point[0]) / 2,
-            'lon': (origin_point[1] + destination_point[1]) / 2
-        }
-    )
-
-    fig.show()
-
 
 if __name__ == "__main__":
 
@@ -58,6 +48,8 @@ if __name__ == "__main__":
     parser.add_argument('--origin', type=float, nargs=2, default=[41.4013741, 2.1552681])
     parser.add_argument('--destination', type=float, nargs=2, default=[41.4107595, 2.1433257])
     parser.add_argument('--place', type=str, default='Barcelona, Spain')
+    parser.add_argument('--style', type=str, default='carto-positron')
+    parser.add_argument('--zoom', type=int, default=15)
     args, additional = parser.parse_known_args()
 
     # obtain map from OpenStreetMap
@@ -76,4 +68,16 @@ if __name__ == "__main__":
         shortest_X.append(point['x'])
         shortest_Y.append(point['y'])
 
-    plot_path(args.origin, args.destination, shortest_X, shortest_Y, 'Shortest', 'blue')
+    # show the paths
+    fig = go.Figure()
+    plot_markers(fig, args.origin, args.destination)
+    plot_path(fig, shortest_X, shortest_Y, 'Shortest', 'blue')
+    fig.update_layout(
+        mapbox_style = args.style,
+        mapbox_zoom = args.zoom,
+        mapbox_center = {
+            'lat': (args.origin[0] + args.destination[0]) / 2,
+            'lon': (args.origin[1] + args.destination[1]) / 2
+        }
+    )
+    fig.show()
