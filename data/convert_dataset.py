@@ -4,7 +4,7 @@ import pandas as pd
 import pyproj
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     parser = ap.ArgumentParser()
     parser.add_argument('--no2', type=str, default='2022_tramer_no2_mapa_qualitat_aire_bcn.gpkg')
@@ -20,10 +20,21 @@ if __name__ == "__main__":
     pm10 = gpd.read_file(args.pm10)
 
     # join air quality indices to road IDs
-    df = pd.read_csv(args.map, encoding="latin-1", index_col=0, sep=';')
-    df = pd.merge(df[['COORD_X','COORD_Y','C_Tram']], no2[['TRAM', 'Rang']], left_on='C_Tram', right_on='TRAM').drop(columns=['C_Tram']).rename(columns={'Rang': 'NO2'})
-    df = pd.merge(df, pm25[['TRAM', 'Rang']]).rename(columns={'Rang': 'PM25'})
-    df = pd.merge(df, pm10[['TRAM', 'Rang']]).rename(columns={'Rang': 'PM10'})
+    df = pd.read_csv(args.map, encoding='latin-1', index_col=0, sep=';')
+    df = pd.merge(
+        df[['COORD_X','COORD_Y','C_Tram']],
+        no2[['TRAM', 'Rang']],
+        left_on='C_Tram',
+        right_on='TRAM'
+    ).drop(columns=['C_Tram']).rename(columns={'Rang': 'NO2'})
+    df = pd.merge(
+        df,
+        pm25[['TRAM', 'Rang']]
+    ).rename(columns={'Rang': 'PM25'})
+    df = pd.merge(
+        df,
+        pm10[['TRAM', 'Rang']]
+    ).rename(columns={'Rang': 'PM10'})
 
     # define UTM zone and projection
     utm_zone = 31

@@ -41,7 +41,7 @@ class MofNCompleteColumn(ProgressColumn):
         )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     parser = ap.ArgumentParser()
     parser.add_argument('--aqi', type=str, default='2022.csv')
@@ -56,12 +56,12 @@ if __name__ == "__main__":
 
     # Define custom progress bar
     test_progress = Progress(
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TextColumn('[progress.percentage]{task.percentage:>3.0f}%'),
         BarColumn(),
         MofNCompleteColumn(),
-        TextColumn("•"),
+        TextColumn('•'),
         TimeElapsedColumn(),
-        TextColumn("•"),
+        TextColumn('•'),
         TimeRemainingColumn(),
     )
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     aqi = pd.read_csv(args.aqi)
 
     with test_progress as progress:
-        task = progress.add_task("Processing map...", total=len(aqi))
+        task = progress.add_task('Processing map...', total=len(aqi))
         for _, row in aqi.iterrows():
             point = row[['LATITUDE', 'LONGITUDE']].values
             u, v, k = ox.nearest_edges(G, point[1], point[0])
