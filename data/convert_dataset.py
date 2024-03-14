@@ -9,7 +9,7 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     parser.add_argument('--aqi', type=str, default='2022_tramer_no2_mapa_qualitat_aire_bcn.gpkg')
     parser.add_argument('--map', type=str, default='BCN_GrafVial_Trams_ETRS89_CSV.csv')
-    parser.add_argument('--output', type=str, default='output.csv')
+    parser.add_argument('--output', type=str, default='2022_no2.csv')
     args, additional = parser.parse_known_args()
 
     # air quality data (only contains the road IDs, e.g., "T00001B")
