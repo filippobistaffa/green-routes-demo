@@ -1,5 +1,7 @@
 osmnx
 plotly
 planar
+pyproj
+geopandas
 matplotlib
 scikit-learn
