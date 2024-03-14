@@ -19,7 +19,7 @@ if __name__ == "__main__":
     pm25 = gpd.read_file(args.pm25)
     pm10 = gpd.read_file(args.pm10)
 
-    # map road IDs to actual coordinates
+    # join air quality indices to road IDs
     df = pd.read_csv(args.map, encoding="latin-1", index_col=0, sep=';')
     df = pd.merge(df[['COORD_X','COORD_Y','C_Tram']], no2[['TRAM', 'Rang']], left_on='C_Tram', right_on='TRAM').drop(columns=['C_Tram']).rename(columns={'Rang': 'NO2'})
     df = pd.merge(df, pm25[['TRAM', 'Rang']]).rename(columns={'Rang': 'PM25'})
@@ -35,5 +35,6 @@ if __name__ == "__main__":
         lon, lat = utm_proj(row['COORD_X'], row['COORD_Y'], inverse=True)
         return pd.Series({'LATITUDE': lat, 'LONGITUDE': lon})
 
+    # map road IDs to actual coordinates
     df[['LATITUDE', 'LONGITUDE']] = df.apply(utm_to_latlon, axis=1)
     df.to_csv(args.output, index=False)
