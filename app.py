@@ -28,30 +28,6 @@ def distance_lat_lon(x, y):
     return result[0, 1] * 6371000 # Earth's radius
 
 
-def plot_point(fig, point, name='Point', color='black'):
-    fig.add_trace(go.Scattermapbox(
-        lat = [point[0]],
-        lon = [point[1]],
-        mode = 'markers',
-        marker = go.scattermapbox.Marker(
-            size = 14,
-            color = color,
-        ),
-        name = name
-    ))
-
-
-def plot_route(fig, X, Y, name='Route', color='blue'):
-    fig.add_trace(go.Scattermapbox(
-        lon = X,
-        lat = Y,
-        name = name,
-        mode = 'lines',
-        marker = {'size': 10},
-        line = dict(width = 4.5, color = color)
-    ))
-
-
 if __name__ == "__main__":
 
     parser = ap.ArgumentParser()
@@ -74,8 +50,8 @@ if __name__ == "__main__":
     destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
 
     # compute shortest route
-    shortest_distace, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
-    print(f'Shortest route total distance: {shortest_distace}')
+    shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
+    print(f'Shortest route total distance: {shortest_distance}')
     shortest_X = []
     shortest_Y = []
     for i in shortest_route:
@@ -83,14 +59,60 @@ if __name__ == "__main__":
         shortest_X.append(point['x'])
         shortest_Y.append(point['y'])
 
-    # add elements to the map
+    # function that computes the weight of an edge
+    def edge_weight(edge_orig, edge_dest, edge_dict):
+        length = edge_dict[0]['length']
+        if 'NO2' in edge_dict[0]:
+            no2_range = [float(n) for n in edge_dict[0]['NO2'].split(' ')[0].split('-')]
+            no2_avg = (no2_range[0] + no2_range[0]) / 2
+            return no2_avg
+        else:
+            return length
+
+    # compute green route
+    _, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight=edge_weight)
+    green_distance = nx.path_weight(G, green_route, 'length')
+    print(f'Green route total distance: {green_distance}')
+    green_X = []
+    green_Y = []
+    for i in green_route:
+        point = G.nodes[i]
+        green_X.append(point['x'])
+        green_Y.append(point['y'])
+
+    # generate map
     fig = go.Figure()
+
+    def plot_point(fig, point, name='Point', color='black'):
+        fig.add_trace(go.Scattermapbox(
+            lat = [point[0]],
+            lon = [point[1]],
+            mode = 'markers',
+            marker = go.scattermapbox.Marker(
+                size = 14,
+                color = color,
+            ),
+            name = name
+        ))
+
+    def plot_route(fig, X, Y, name='Route', color='blue'):
+        fig.add_trace(go.Scattermapbox(
+            lon = X,
+            lat = Y,
+            name = name,
+            mode = 'lines',
+            marker = {'size': 10},
+            line = dict(width = 4.5, color = color)
+        ))
+
+    # add elements to the map
     plot_point(fig, origin_point, args.origin, 'black')
     plot_point(fig, destination_point, args.destination, 'red')
-    plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distace:.0f} m)', 'blue')
+    plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
+    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m)', 'green')
 
     # show the map
-    zoom, center = auto_zoom(shortest_X, shortest_Y)
+    zoom, center = auto_zoom(shortest_X + green_X, shortest_Y + green_Y)
     fig.update_layout(
         mapbox_style = args.style,
         mapbox_zoom = zoom,
