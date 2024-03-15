@@ -33,12 +33,12 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     parser.add_argument('--origin', type=str)
     parser.add_argument('--destination', type=str)
-    parser.add_argument('--aqi', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
+    parser.add_argument('--graph', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
-    with open(args.aqi, 'rb') as f:
+    with open(args.graph, 'rb') as f:
         G = pickle.load(f)
 
     # compute coordinates of origin and destination points
