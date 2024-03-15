@@ -44,7 +44,7 @@ class MofNCompleteColumn(ProgressColumn):
 if __name__ == '__main__':
 
     parser = ap.ArgumentParser()
-    parser.add_argument('--aqi', type=str, default='2022.csv')
+    parser.add_argument('--aqi', type=str, default='2022_locations_aqi.csv')
     parser.add_argument('--place', type=str, default='Barcelona, Spain')
     parser.add_argument('--output', type=str, default='2022_graph_aqi.pkl')
     args, additional = parser.parse_known_args()

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     parser.add_argument('--pm25', type=str, default='2022_tramer_pm2-5_mapa_qualitat_aire_bcn.gpkg')
     parser.add_argument('--pm10', type=str, default='2022_tramer_pm10_mapa_qualitat_aire_bcn.gpkg')
     parser.add_argument('--map', type=str, default='BCN_GrafVial_Trams_ETRS89_CSV.csv')
-    parser.add_argument('--output', type=str, default='2022.csv')
+    parser.add_argument('--output', type=str, default='2022_locations_aqi.csv')
     args, additional = parser.parse_known_args()
 
     # air quality data (only contains the road IDs, e.g., "T00001B")
