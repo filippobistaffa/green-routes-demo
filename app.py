@@ -6,64 +6,39 @@ import numpy as np
 
 
 def auto_zoom(X, Y):
-
     import planar
     b_box = planar.BoundingBox(list(zip(X, Y)))
     area = b_box.height * b_box.width
-
-    # * 1D-linear interpolation with numpy:
-    # - Pass the area as the only x-value and not as a list, in order to return a scalar as well
-    # - The x-points "xp" should be in parts in comparable order of magnitude of the given area
-    # - The zoom-levels are adapted to the areas, i.e. start with the smallest area possible of 0
-    # which leads to the highest possible zoom value 20, and so forth decreasing with increasing areas
-    # as these variables are antiproportional
     zoom = np.interp(
         x = area,
         xp = [0, 5**-10, 4**-10, 3**-10, 2**-10, 1**-10, 1**-5],
         fp = [20, 17, 16, 15, 14, 7, 5]
     )
-
     return zoom, b_box.center
 
 
 def distance_lat_lon(x, y):
-
     from sklearn.metrics.pairwise import haversine_distances
     from math import radians
-
     x_radians = [radians(_) for _ in x]
     y_radians = [radians(_) for _ in y]
     result = haversine_distances([x_radians, y_radians])
     return result[0, 1] * 6371000 # Earth's radius
 
 
-def plot_markers(fig, origin, destination):
-
+def plot_point(fig, point, name='Point', color='black'):
     fig.add_trace(go.Scattermapbox(
-        lat = [origin[0]],
-        lon = [origin[1]],
+        lat = [point[0]],
+        lon = [point[1]],
         mode = 'markers',
         marker = go.scattermapbox.Marker(
             size = 14,
-            color = 'black',
+            color = color,
         ),
-        name = 'Origin'
+        name = name
     ))
 
-    fig.add_trace(go.Scattermapbox(
-        lat = [destination[0]],
-        lon = [destination[1]],
-        mode = 'markers',
-        marker = go.scattermapbox.Marker(
-            size = 14,
-            color = 'red',
-        ),
-        name = 'Destination'
-    ))
-
-
-def plot_route(fig, X, Y, name='Route', color='blue', zoom=15):
-
+def plot_route(fig, X, Y, name='Route', color='blue'):
     fig.add_trace(go.Scattermapbox(
         lon = X,
         lat = Y,
@@ -108,10 +83,13 @@ if __name__ == "__main__":
         shortest_X.append(point['x'])
         shortest_Y.append(point['y'])
 
-    # show the routes
+    # add elements to the map
     fig = go.Figure()
-    plot_markers(fig, origin_point, destination_point)
-    plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distace:.0f} m)', 'blue')
+    plot_point(fig, origin_point, args.origin, 'black')
+    plot_point(fig, destination_point, args.destination, 'red')
+    plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distace:.0f} m)', 'blue')
+
+    # show the map
     zoom, center = auto_zoom(shortest_X, shortest_Y)
     fig.update_layout(
         mapbox_style = args.style,
@@ -121,10 +99,10 @@ if __name__ == "__main__":
             'lat': center[1]
         },
         margin = {
-            'r': 10,
-            't': 10,
-            'l': 10,
-            'b': 10
+            'r': 30,
+            't': 30,
+            'l': 30,
+            'b': 30
         }
     )
     fig.show()
