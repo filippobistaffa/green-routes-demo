@@ -49,9 +49,25 @@ if __name__ == "__main__":
     origin_node = ox.nearest_nodes(G, origin_point[1], origin_point[0])
     destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
 
+    # air quality index function
+    def aqi(data):
+        length = data['length']
+        if 'NO2' in data:
+            no2_range = [float(n) for n in data['NO2'].split(' ')[0].split('-')]
+            no2_avg = (no2_range[0] + no2_range[0]) / 2
+            return 10 * no2_avg
+        else:
+            return 10000000000000
+
+    # store air quality index on each edge
+    for u, v in G.edges():
+        G[u][v][0]['aqi'] = aqi(G.get_edge_data(u, v)[0])
+
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
-    print(f'Shortest route total distance: {shortest_distance}')
+    shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
+    print(f'Shortest route total distance: {shortest_distance:.2f}')
+    print(f'Shortest route total exposure: {shortest_exposure:.2f}')
     shortest_X = []
     shortest_Y = []
     for i in shortest_route:
@@ -59,20 +75,11 @@ if __name__ == "__main__":
         shortest_X.append(point['x'])
         shortest_Y.append(point['y'])
 
-    # function that computes the weight of an edge
-    def edge_weight(edge_orig, edge_dest, edge_dict):
-        length = edge_dict[0]['length']
-        if 'NO2' in edge_dict[0]:
-            no2_range = [float(n) for n in edge_dict[0]['NO2'].split(' ')[0].split('-')]
-            no2_avg = (no2_range[0] + no2_range[0]) / 2
-            return no2_avg
-        else:
-            return length
-
     # compute green route
-    _, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight=edge_weight)
+    green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='aqi')
     green_distance = nx.path_weight(G, green_route, 'length')
-    print(f'Green route total distance: {green_distance}')
+    print(f'Green route total distance: {green_distance:.2f}')
+    print(f'Green route total exposure: {green_exposure:.2f}')
     green_X = []
     green_Y = []
     for i in green_route:
