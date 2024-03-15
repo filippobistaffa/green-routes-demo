@@ -40,6 +40,7 @@ def plot_point(fig, point, name='Point', color='black'):
         name = name
     ))
 
+
 def plot_route(fig, X, Y, name='Route', color='blue'):
     fig.add_trace(go.Scattermapbox(
         lon = X,
