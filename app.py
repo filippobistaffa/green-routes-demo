@@ -3,6 +3,8 @@ import argparse as ap
 import networkx as nx
 import osmnx as ox
 import numpy as np
+import pickle
+import os
 
 
 def auto_zoom(X, Y):
@@ -54,20 +56,17 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     parser.add_argument('--origin', type=str)
     parser.add_argument('--destination', type=str)
+    parser.add_argument('--aqi', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
+
+    # load precomputed graph
+    with open(args.aqi, 'rb') as f:
+        G = pickle.load(f)
 
     # compute coordinates of origin and destination points
     origin_point = np.array(ox.geocode(args.origin))
     destination_point = np.array(ox.geocode(args.destination))
-
-    # compute centroid for the map
-    centroid_point = (origin_point + destination_point) / 2
-
-    # obtain map from OpenStreetMap
-    ox.settings.use_cache = True
-    ox.settings.log_console = True
-    G = ox.graph_from_point(centroid_point, dist=distance_lat_lon(centroid_point, origin_point), network_type='walk')
 
     # compute nodes on the graph corresponding to origin and destination points
     origin_node = ox.nearest_nodes(G, origin_point[1], origin_point[0])
