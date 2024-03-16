@@ -7,27 +7,6 @@ import pickle
 import os
 
 
-def auto_zoom(X, Y):
-    import planar
-    b_box = planar.BoundingBox(list(zip(X, Y)))
-    area = b_box.height * b_box.width
-    zoom = np.interp(
-        x = area,
-        xp = [0, 5**-10, 4**-10, 3**-10, 2**-10, 1**-10, 1**-5],
-        fp = [20, 17, 16, 15, 14, 7, 5]
-    )
-    return zoom, b_box.center
-
-
-def distance_lat_lon(x, y):
-    from sklearn.metrics.pairwise import haversine_distances
-    from math import radians
-    x_radians = [radians(_) for _ in x]
-    y_radians = [radians(_) for _ in y]
-    result = haversine_distances([x_radians, y_radians])
-    return result[0, 1] * 6371000 # Earth's radius
-
-
 if __name__ == "__main__":
 
     parser = ap.ArgumentParser()
@@ -35,6 +14,7 @@ if __name__ == "__main__":
     parser.add_argument('--destination', type=str)
     parser.add_argument('--graph', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
+    parser.add_argument('--aqi', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
@@ -50,14 +30,15 @@ if __name__ == "__main__":
     destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
 
     # air quality index function
-    def aqi(data):
-        length = data['length']
-        if 'NO2' in data:
-            no2_range = [float(n) for n in data['NO2'].split(' ')[0].split('-')]
-            no2_avg = (no2_range[0] + no2_range[0]) / 2
-            return 10 * no2_avg
+    def aqi(edge_data):
+        length = edge_data['length']
+        aqi_data = edge_data[args.aqi.upper()].split(' ')[0]
+        if aqi_data.startswith('>'):
+            aqi_value = 1.5 * float(aqi_data[1:])
         else:
-            return 10000000000000
+            aqi_range = [float(n) for n in aqi_data.split('-')]
+            aqi_value = (aqi_range[0] + aqi_range[0]) / 2
+        return length * aqi_value
 
     # store air quality index on each edge
     for u, v in G.edges():
@@ -86,6 +67,12 @@ if __name__ == "__main__":
         point = G.nodes[i]
         green_X.append(point['x'])
         green_Y.append(point['y'])
+
+    # compute KPIs (%)
+    exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
+    distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
+    print(f'{args.aqi.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
+    print(f'Distance increase: +{distance_increase_percentage:.2f}%')
 
     # generate map
     fig = go.Figure()
@@ -116,9 +103,19 @@ if __name__ == "__main__":
     plot_point(fig, origin_point, args.origin, 'black')
     plot_point(fig, destination_point, args.destination, 'red')
     plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
-    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m)', 'green')
+    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {args.aqi.upper()})', 'green')
 
     # show the map
+    def auto_zoom(X, Y):
+        import planar
+        b_box = planar.BoundingBox(list(zip(X, Y)))
+        area = b_box.height * b_box.width
+        zoom = np.interp(
+            x = area,
+            xp = [0, 5**-10, 4**-10, 3**-10, 2**-10, 1**-10, 1**-5],
+            fp = [20, 17, 16, 15, 14, 7, 5]
+        )
+        return 0.95 * zoom, b_box.center
     zoom, center = auto_zoom(shortest_X + green_X, shortest_Y + green_Y)
     fig.update_layout(
         mapbox_style = args.style,
