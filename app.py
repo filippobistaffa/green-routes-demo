@@ -4,6 +4,7 @@ import networkx as nx
 import osmnx as ox
 import numpy as np
 import pickle
+import sys
 import os
 
 
@@ -46,7 +47,11 @@ if __name__ == "__main__":
 
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
-    shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
+    try:
+        shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
+    except KeyError:
+        print('ERROR: Missing air quality data for selected locations', file=sys.stderr)
+        quit()
     print(f'Shortest route total distance: {shortest_distance:.2f}')
     print(f'Shortest route total exposure: {shortest_exposure:.2f}')
     shortest_X = []
