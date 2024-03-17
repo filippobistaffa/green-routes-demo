@@ -4,7 +4,6 @@ import networkx as nx
 import osmnx as ox
 import numpy as np
 import pickle
-import sys
 import os
 
 
@@ -42,16 +41,12 @@ if __name__ == "__main__":
         return length * aqi_value
 
     # store air quality index on each edge
-    for u, v in G.edges():
-        G[u][v][0]['aqi'] = aqi(G.get_edge_data(u, v)[0])
+    for u, v, k in G.edges:
+        G[u][v][k]['aqi'] = aqi(G[u][v][k])
 
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
-    try:
-        shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
-    except KeyError:
-        print('ERROR: Missing air quality data for selected locations', file=sys.stderr)
-        quit()
+    shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
     print(f'Shortest route total distance: {shortest_distance:.2f}')
     print(f'Shortest route total exposure: {shortest_exposure:.2f}')
     shortest_X = []
