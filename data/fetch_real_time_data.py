@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     parser = ap.ArgumentParser()
     parser.add_argument('--url', type=str, default='https://dadesmesuresestacions.dtibcn.cat/qualitataire/services/getStations.php')
-    parser.add_argument('--output', type=str, default=f'{datetime.datetime.now()}'.replace(" ", "-").split('.')[0] + '.json')
+    parser.add_argument('--output', type=str, default=f'aqi_{datetime.datetime.now()}'.replace(" ", "-").split('.')[0] + '.json')
     args, additional = parser.parse_known_args()
 
     # fetch real-time data
