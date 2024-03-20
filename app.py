@@ -107,7 +107,6 @@ if __name__ == "__main__":
             lat = Y,
             name = name,
             mode = 'lines',
-            marker = {'size': 10},
             line = dict(width = 4.5, color = color),
             hovertemplate = f'{name}'
         ))
