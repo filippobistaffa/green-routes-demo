@@ -51,7 +51,7 @@ if __name__ == "__main__":
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
     shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
-    print(f'Shortest route total distance: {shortest_distance:.2f}')
+    print(f'Shortest route total distance: {shortest_distance:.2f} m')
     print(f'Shortest route total exposure: {shortest_exposure:.2f}')
     shortest_X = []
     shortest_Y = []
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # compute green route
     green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='aqi')
     green_distance = nx.path_weight(G, green_route, 'length')
-    print(f'Green route total distance: {green_distance:.2f}')
+    print(f'Green route total distance: {green_distance:.2f} m')
     print(f'Green route total exposure: {green_exposure:.2f}')
     green_X = []
     green_Y = []
