@@ -97,7 +97,8 @@ if __name__ == "__main__":
             ),
             name = name,
             text = label,
-            textfont = dict(color='white') if color is not None and needs_white_text else None
+            textfont = dict(color='white') if color is not None and needs_white_text else None,
+            hovertemplate = f'{name}: {label}<extra></extra>' if label is not None else f'{name}'
         ))
 
     def plot_route(fig, X, Y, name='Route', color='blue'):
@@ -107,7 +108,8 @@ if __name__ == "__main__":
             name = name,
             mode = 'lines',
             marker = {'size': 10},
-            line = dict(width = 4.5, color = color)
+            line = dict(width = 4.5, color = color),
+            hovertemplate = f'{name}'
         ))
 
     # add elements to the map
@@ -156,6 +158,6 @@ if __name__ == "__main__":
             'l': 30,
             'b': 30
         },
-        hovermode = False
+        #hovermode = False
     )
     fig.show()
