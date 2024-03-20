@@ -97,8 +97,8 @@ if __name__ == "__main__":
             ),
             name = name,
             text = label,
+            hovertemplate = f'{name}',
             textfont = dict(color='white') if color is not None and needs_white_text else None,
-            hovertemplate = f'{name}: {label}<extra></extra>' if label is not None else f'{name}'
         ))
 
     def plot_route(fig, X, Y, name='Route', color='blue'):
@@ -128,7 +128,7 @@ if __name__ == "__main__":
                         plot_point(
                             fig,
                             (sensor['latitude'], sensor['longitude']),
-                            name = sensor['name'],
+                            name = f"{sensor['name']}: {measure['value']} {measure['unit']}",
                             color = measure['color'],
                             label = measure['value']
                         )
