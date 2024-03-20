@@ -107,7 +107,10 @@ if __name__ == "__main__":
             lat = Y,
             name = name,
             mode = 'lines',
-            line = dict(width = 4.5, color = color),
+            line = dict(
+                width = 4.5,
+                color = color
+            ),
             hovertemplate = f'{name}'
         ))
 
