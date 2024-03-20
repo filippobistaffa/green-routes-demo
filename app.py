@@ -3,8 +3,11 @@ import argparse as ap
 import networkx as nx
 import osmnx as ox
 import numpy as np
+import webcolors
 import pickle
+import json
 import os
+import re
 
 
 if __name__ == "__main__":
@@ -15,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--graph', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     parser.add_argument('--aqi', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
+    parser.add_argument('--sensors', type=str)
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
@@ -77,16 +81,23 @@ if __name__ == "__main__":
     # generate map
     fig = go.Figure()
 
-    def plot_point(fig, point, name='Point', color='black'):
+    def plot_point(fig, point, name='Point', color='black', label=None):
+        if color is not None:
+            if not color.startswith('#'):
+                color = webcolors.name_to_hex(color)
+            rgb = webcolors.hex_to_rgb(color)
+            needs_white_text = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 186
         fig.add_trace(go.Scattermapbox(
             lat = [point[0]],
             lon = [point[1]],
-            mode = 'markers',
-            marker = go.scattermapbox.Marker(
-                size = 14,
-                color = color,
+            mode = 'markers+text',
+            marker = dict(
+                size = 14 if label is None else 30,
+                color = color
             ),
-            name = name
+            name = name,
+            text = label,
+            textfont = dict(color='white') if color is not None and needs_white_text else None
         ))
 
     def plot_route(fig, X, Y, name='Route', color='blue'):
@@ -104,6 +115,21 @@ if __name__ == "__main__":
     plot_point(fig, destination_point, args.destination, 'red')
     plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
     plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {args.aqi.upper()})', 'green')
+
+    # show sensor data if available
+    if args.sensors is not None:
+        with open(args.sensors) as f:
+            sensors = json.load(f)
+            for sensor in sensors:
+                for measure in sensor['measures']:
+                    if args.aqi.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
+                        plot_point(
+                            fig,
+                            (sensor['latitude'], sensor['longitude']),
+                            name = sensor['name'],
+                            color = measure['color'],
+                            label = measure['value']
+                        )
 
     # show the map
     def auto_zoom(X, Y):
@@ -129,6 +155,7 @@ if __name__ == "__main__":
             't': 30,
             'l': 30,
             'b': 30
-        }
+        },
+        hovermode = False
     )
     fig.show()

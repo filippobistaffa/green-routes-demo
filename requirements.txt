@@ -3,6 +3,7 @@ osmnx
 plotly
 planar
 pyproj
+webcolors
 geopandas
 matplotlib
 scikit-learn
