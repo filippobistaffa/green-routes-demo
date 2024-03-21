@@ -86,7 +86,9 @@ if __name__ == "__main__":
             if not color.startswith('#'):
                 color = webcolors.name_to_hex(color)
             rgb = webcolors.hex_to_rgb(color)
-            needs_white_text = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 186
+            # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L43 +
+            # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L63
+            needs_white_text = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 128
         fig.add_trace(go.Scattermapbox(
             lat = [point[0]],
             lon = [point[1]],
