@@ -21,6 +21,12 @@ if __name__ == "__main__":
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
 
+    pollutants = {
+        'no2': 'NO<sub>2</sub>',
+        'pm25': 'PM<sub>2.5</sub>',
+        'pm10': 'PM<sub>10</sub>',
+    }
+
     # load precomputed graph
     with open(args.historical, 'rb') as f:
         G = pickle.load(f)
@@ -120,7 +126,7 @@ if __name__ == "__main__":
     plot_point(fig, origin_point, args.origin, 'black')
     plot_point(fig, destination_point, args.destination, 'red')
     plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
-    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {args.pollutant.upper()})', 'green')
+    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green')
 
     # show sensor data if available
     if args.sensors is not None:
@@ -132,7 +138,7 @@ if __name__ == "__main__":
                         plot_point(
                             fig,
                             (sensor['latitude'], sensor['longitude']),
-                            name = f"{sensor['name']}: {measure['value']} {measure['unit']} {args.pollutant.upper()}",
+                            name = f"{sensor['name']}: {measure['value']} {measure['unit']} {pollutants[args.pollutant]}",
                             color = measure['color'],
                             label = measure['value']
                         )
