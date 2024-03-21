@@ -15,14 +15,14 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     parser.add_argument('--origin', type=str)
     parser.add_argument('--destination', type=str)
-    parser.add_argument('--graph', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
-    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
-    parser.add_argument('--aqi', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
+    parser.add_argument('--historical', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--sensors', type=str)
+    parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
+    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
-    with open(args.graph, 'rb') as f:
+    with open(args.historical, 'rb') as f:
         G = pickle.load(f)
 
     # compute coordinates of origin and destination points
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # air quality index function
     def aqi(edge_data):
         length = edge_data['length']
-        aqi_data = edge_data[args.aqi.upper()].split(' ')[0]
+        aqi_data = edge_data[args.pollutant.upper()].split(' ')[0]
         if aqi_data.startswith('>'):
             aqi_value = 1.5 * float(aqi_data[1:])
         else:
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # compute KPIs (%)
     exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
     distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
-    print(f'{args.aqi.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
+    print(f'{args.pollutant.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
     print(f'Distance increase: +{distance_increase_percentage:.2f}%')
 
     # generate map
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     plot_point(fig, origin_point, args.origin, 'black')
     plot_point(fig, destination_point, args.destination, 'red')
     plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
-    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {args.aqi.upper()})', 'green')
+    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {args.pollutant.upper()})', 'green')
 
     # show sensor data if available
     if args.sensors is not None:
@@ -128,11 +128,11 @@ if __name__ == "__main__":
             sensors = json.load(f)
             for sensor in sensors:
                 for measure in sensor['measures']:
-                    if args.aqi.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
+                    if args.pollutant.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
                         plot_point(
                             fig,
                             (sensor['latitude'], sensor['longitude']),
-                            name = f"{sensor['name']}: {measure['value']} {measure['unit']} {args.aqi.upper()}",
+                            name = f"{sensor['name']}: {measure['value']} {measure['unit']} {args.pollutant.upper()}",
                             color = measure['color'],
                             label = measure['value']
                         )
