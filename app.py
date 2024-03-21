@@ -132,7 +132,7 @@ if __name__ == "__main__":
                         plot_point(
                             fig,
                             (sensor['latitude'], sensor['longitude']),
-                            name = f"{sensor['name']}: {measure['value']} {measure['unit']}",
+                            name = f"{sensor['name']}: {measure['value']} {measure['unit']} {args.aqi.upper()}",
                             color = measure['color'],
                             label = measure['value']
                         )
