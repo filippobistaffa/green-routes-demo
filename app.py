@@ -126,7 +126,8 @@ if __name__ == "__main__":
     plot_point(fig, origin_point, args.origin, 'black')
     plot_point(fig, destination_point, args.destination, 'red')
     plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
-    plot_route(fig, green_X, green_Y, f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green')
+    plot_route(fig, green_X, green_Y,
+        f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green')
 
     # show sensor data if available
     if args.sensors is not None:
