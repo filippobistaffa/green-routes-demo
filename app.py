@@ -146,15 +146,18 @@ if __name__ == "__main__":
 
     # show the map
     def auto_zoom(X, Y):
-        import planar
-        b_box = planar.BoundingBox(list(zip(X, Y)))
-        area = b_box.height * b_box.width
+        from shapely.geometry import MultiPoint
+        multi_point = MultiPoint(list(zip(X, Y)))
+        bounding_box = multi_point.bounds
+        center_x = (bounding_box[0] + bounding_box[2]) / 2
+        center_y = (bounding_box[1] + bounding_box[3]) / 2
+        area = (bounding_box[2] - bounding_box[0]) * (bounding_box[3] - bounding_box[1])
         zoom = np.interp(
             x = area,
             xp = [0, 5**-10, 4**-10, 3**-10, 2**-10, 1**-10, 1**-5],
             fp = [20, 17, 16, 15, 14, 7, 5]
         )
-        return 0.95 * zoom, b_box.center
+        return 0.95 * zoom, (center_x, center_y)
     zoom, center = auto_zoom(shortest_X + green_X, shortest_Y + green_Y)
     fig.update_layout(
         mapbox_style = args.style,

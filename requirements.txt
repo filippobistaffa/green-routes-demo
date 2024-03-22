@@ -1,8 +1,8 @@
 rich
 osmnx
 plotly
-planar
 pyproj
+shapely
 webcolors
 geopandas
 matplotlib
