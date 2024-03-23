@@ -94,7 +94,7 @@ if __name__ == "__main__":
             rgb = webcolors.hex_to_rgb(color)
             # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L43 +
             # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L63
-            needs_white_text = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 128
+            color_is_dark = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 128
         fig.add_trace(go.Scattermapbox(
             lat = [point[0]],
             lon = [point[1]],
@@ -106,7 +106,7 @@ if __name__ == "__main__":
             name = name,
             text = label,
             hovertemplate = f'{name}',
-            textfont = dict(color='white') if color is not None and needs_white_text else None,
+            textfont = dict(color='white') if color_is_dark else None,
         ))
 
     def plot_route(fig, X, Y, name='Route', color='blue'):
