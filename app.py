@@ -21,12 +21,6 @@ if __name__ == "__main__":
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
 
-    pollutants = {
-        'no2': 'NO<sub>2</sub>',
-        'pm25': 'PM<sub>2.5</sub>',
-        'pm10': 'PM<sub>10</sub>',
-    }
-
     # load precomputed graph
     with open(args.historical, 'rb') as f:
         G = pickle.load(f)
@@ -121,6 +115,13 @@ if __name__ == "__main__":
             ),
             hovertemplate = f'{name}'
         ))
+
+    # html names for pullutants
+    pollutants = {
+        'no2': 'NO<sub>2</sub>',
+        'pm25': 'PM<sub>2.5</sub>',
+        'pm10': 'PM<sub>10</sub>',
+    }
 
     # add elements to the map
     plot_point(fig, origin_point, args.origin, 'black')
