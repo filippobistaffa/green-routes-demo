@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # generate map
     fig = go.Figure()
 
-    def plot_point(fig, point, name='Point', color='black', label=None):
+    def plot_point(fig, point, name='Point', color='black', label=None, group=None, group_title=None):
         if color is not None:
             if not color.startswith('#'):
                 color = webcolors.name_to_hex(color)
@@ -101,9 +101,11 @@ if __name__ == "__main__":
             text = label,
             hovertemplate = f'{name}',
             textfont = dict(color='white') if color_is_dark else None,
+            legendgroup=group,
+            legendgrouptitle_text=group_title,
         ))
 
-    def plot_route(fig, X, Y, name='Route', color='blue'):
+    def plot_route(fig, X, Y, name='Route', color='blue', group=None, group_title=None):
         fig.add_trace(go.Scattermapbox(
             lon = X,
             lat = Y,
@@ -113,7 +115,9 @@ if __name__ == "__main__":
                 width = 4.5,
                 color = color
             ),
-            hovertemplate = f'{name}'
+            hovertemplate = f'{name}',
+            legendgroup=group,
+            legendgrouptitle_text=group_title,
         ))
 
     # html names for pullutants
@@ -124,16 +128,19 @@ if __name__ == "__main__":
     }
 
     # add elements to the map
-    plot_point(fig, origin_point, args.origin, 'black')
-    plot_point(fig, destination_point, args.destination, 'red')
-    plot_route(fig, shortest_X, shortest_Y, f'Shortest route ({shortest_distance:.0f} m)', 'blue')
+    plot_point(fig, origin_point, args.origin, 'black', group='origin', group_title='Origin')
+    plot_point(fig, destination_point, args.destination, 'red', group='destination', group_title='Destination')
+    plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distance:.0f} m)', 'blue',
+        group='routes', group_title='Routes')
     plot_route(fig, green_X, green_Y,
-        f'Green route ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green')
+        f'Green ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green',
+        group='routes')
 
     # show sensor data if available
     if args.sensors is not None:
         with open(args.sensors) as f:
             sensors = json.load(f)
+            legend_first = True
             for sensor in sensors:
                 for measure in sensor['measures']:
                     if args.pollutant.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
@@ -142,8 +149,11 @@ if __name__ == "__main__":
                             (sensor['latitude'], sensor['longitude']),
                             name = f"{sensor['name']}: {measure['value']} {measure['unit']} {pollutants[args.pollutant]}",
                             color = measure['color'],
-                            label = measure['value']
+                            label = measure['value'],
+                            group='sensors',
+                            group_title='Sensors' if legend_first else None
                         )
+                legend_first = False
 
     # show the map
     def auto_zoom(X, Y):
