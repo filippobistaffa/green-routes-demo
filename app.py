@@ -140,6 +140,7 @@ if __name__ == "__main__":
     if args.sensors is not None:
         with open(args.sensors) as f:
             sensors = json.load(f)
+            datetime = sensors[0]['measures'][0]['datetime']
             legend_first = True
             for sensor in sensors:
                 for measure in sensor['measures']:
@@ -151,7 +152,7 @@ if __name__ == "__main__":
                             color = measure['color'],
                             label = measure['value'],
                             group='sensors',
-                            group_title='Sensors' if legend_first else None
+                            group_title=f'Sensors ({datetime})' if legend_first else None
                         )
                 legend_first = False
 
