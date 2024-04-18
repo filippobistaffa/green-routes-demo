@@ -22,3 +22,4 @@ if __name__ == '__main__':
     # dump it as a JSON file
     with open(args.output, 'w') as f:
         json.dump(sensors_data, f, indent=2)
+        print(f'Real-time sensor data written to {args.output}')
