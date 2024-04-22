@@ -138,13 +138,16 @@ if __name__ == "__main__":
 
     # show sensor data if available
     if args.sensors is not None:
+        sensor_nodes_aqi = {}
         with open(args.sensors) as f:
             sensors = json.load(f)
             datetime = sensors[0]['measures'][0]['datetime']
             legend_first = True
             for sensor in sensors:
+                sensor_node = ox.nearest_nodes(G, float(sensor['longitude']), float(sensor['latitude']))
                 for measure in sensor['measures']:
                     if args.pollutant.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
+                        sensor_nodes_aqi[sensor_node] = int(measure['value'])
                         plot_point(
                             fig,
                             (sensor['latitude'], sensor['longitude']),
@@ -155,6 +158,7 @@ if __name__ == "__main__":
                             group_title=f'Sensors ({datetime})' if legend_first else None
                         )
                 legend_first = False
+        nx.set_node_attributes(G, sensor_nodes_aqi, 'aqi')
 
     # show the map
     def auto_zoom(X, Y):
