@@ -9,6 +9,8 @@ import json
 import os
 import re
 
+from mamp import MAMP
+
 
 if __name__ == "__main__":
 
@@ -158,7 +160,7 @@ if __name__ == "__main__":
                             group_title=f'Sensors ({datetime})' if legend_first else None
                         )
                 legend_first = False
-        nx.set_node_attributes(G, sensor_nodes_aqi, 'aqi')
+        MAMP(G, sensor_nodes_aqi)
 
     # show the map
     def auto_zoom(X, Y):
