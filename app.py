@@ -37,22 +37,22 @@ if __name__ == "__main__":
 
     # air quality index function
     def aqi(edge_data):
-        length = edge_data['length']
         aqi_data = edge_data[args.pollutant.upper()].split(' ')[0]
         if aqi_data.startswith('>'):
             aqi_value = 1.5 * float(aqi_data[1:])
         else:
             aqi_range = [float(n) for n in aqi_data.split('-')]
             aqi_value = (aqi_range[0] + aqi_range[0]) / 2
-        return length * aqi_value
+        return aqi_value
 
-    # store air quality index on each edge
+    # store air quality index and exposure on each edge
     for u, v, k in G.edges:
         G[u][v][k]['aqi'] = aqi(G[u][v][k])
+        G[u][v][k]['exposure'] = G[u][v][k]['length'] * G[u][v][k]['aqi']
 
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
-    shortest_exposure = nx.path_weight(G, shortest_route, 'aqi')
+    shortest_exposure = nx.path_weight(G, shortest_route, 'exposure')
     print(f'Shortest route total distance: {shortest_distance:.2f} m')
     print(f'Shortest route total exposure: {shortest_exposure:.2f}')
     shortest_X = []
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         shortest_Y.append(point['y'])
 
     # compute green route
-    green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='aqi')
+    green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
     green_distance = nx.path_weight(G, green_route, 'length')
     print(f'Green route total distance: {green_distance:.2f} m')
     print(f'Green route total exposure: {green_exposure:.2f}')
