@@ -71,8 +71,8 @@ if __name__ == "__main__":
     # compute green route
     green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
     green_distance = nx.path_weight(G, green_route, 'length')
-    print(f'Green route total distance: {green_distance:.2f} m')
-    print(f'Green route total exposure: {green_exposure:.2f}')
+    print(f'Green route (historical data) total distance: {green_distance:.2f} m')
+    print(f'Green route (historical data) total exposure: {green_exposure:.2f}')
     green_X = []
     green_Y = []
     for i in green_route:
@@ -166,8 +166,32 @@ if __name__ == "__main__":
                             group_title=f'Sensors ({datetime})' if legend_first else None
                         )
                 legend_first = False
+        # extend the sensors' values for the desired number of hops
         mask = expand_mask(G, sensor_nodes_aqi, args.sensor_radius)
+        # run MAMP algorithm
         MAMP(G, {**mask, **sensor_nodes_aqi}, sensor_nodes_aqi, max_epochs=args.mamp_epochs)
+        # recompute exposure with updated air quality values
+        for u, v, k in G.edges:
+            G[u][v][k]['exposure'] = exposure(G[u][v][k])
+        # recompute green route with updated exposure data
+        green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
+        green_distance = nx.path_weight(G, green_route, 'length')
+        print(f'Green route (historical + real-time data) total distance: {green_distance:.2f} m')
+        print(f'Green route (historical + real-time data) total exposure: {green_exposure:.2f}')
+        green_X = []
+        green_Y = []
+        for i in green_route:
+            point = G.nodes[i]
+            green_X.append(point['x'])
+            green_Y.append(point['y'])
+        plot_route(fig, green_X, green_Y,
+            f'Green + Sensors ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', '#90EE90',
+            group='routes')
+        # recompute KPIs (%)
+        exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
+        distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
+        print(f'{args.pollutant.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
+        print(f'Distance increase: +{distance_increase_percentage:.2f}%')
 
     # show the map
     def auto_zoom(X, Y):
@@ -199,4 +223,4 @@ if __name__ == "__main__":
         },
         #hovermode = False
     )
-    #fig.show()
+    fig.show()

@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+import hashlib
 import random
+import time
 
 def export_graph_png(G, png, sensor, mask=None):
     x_pos = nx.get_node_attributes(G, 'x')
@@ -43,10 +45,8 @@ def set_node_weights_avg(G, weight):
 
 # Compute the edges' weights as the average of the extreme points
 def set_edge_weights_avg(G, weight):
-    edges_avg_weight = {}
     for u, v, k in G.edges:
-        edges_avg_weight[(u, v, k)] = (G.nodes[u][weight] + G.nodes[v][weight]) / 2
-    nx.set_edge_attributes(G, edges_avg_weight, weight)
+        G[u][v][k][weight] = (G.nodes[u][weight] + G.nodes[v][weight]) / 2
 
 def aggregate(nodes, weight):
     return sum(node[weight] for node in nodes) / len(nodes)
@@ -55,12 +55,13 @@ def combine(h, m):
     return (h + m) / 2
 
 def MAMP(G, mask, sensors, weight='aqi', max_epochs=2, max_mse=5e-3):
+    print('Running MAMP algorithm')
     # initialise nodes' weights
     set_node_weights_avg(G, weight)
     # set the mask (true values)
     nx.set_node_attributes(G, mask, weight)
-    example_sensor = random.choice(list(sensors.keys()))
-    export_graph_png(G, 'epoch_00.png', example_sensor, mask)
+    #example_sensor = random.choice(list(sensors.keys()))
+    #export_graph_png(G, 'epoch_00.png', example_sensor, mask)
     for epoch in range(max_epochs):
         # compute the current weights
         #G_weights = np.array(list(nx.get_node_attributes(G, weight).values()))
@@ -82,9 +83,10 @@ def MAMP(G, mask, sensors, weight='aqi', max_epochs=2, max_mse=5e-3):
         # check for early-stopping criterion
         #if mse < max_mse:
         #    break
-        export_graph_png(G, f'epoch_{epoch+1:02d}.png', example_sensor, mask)
+        #export_graph_png(G, f'epoch_{epoch+1:02d}.png', example_sensor, mask)
     # set edges' weights according to the computed nodes' weights
     set_edge_weights_avg(G, weight)
+    #print(hashlib.sha1(np.array(list(nx.get_node_attributes(G_next, weight).values())).view(np.uint8)).hexdigest())
     return G
 
 def expand_mask(G, sensors, hops=1):
