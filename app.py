@@ -190,6 +190,7 @@ if __name__ == "__main__":
         distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
         print(f'{args.pollutant.upper()} exposure difference: {-exposure_reduction_percentage:+.2f}%')
         print(f'Distance difference: {distance_increase_percentage:+.2f}%')
+        # plot new route
         plot_route(fig, green_X, green_Y,
             f'Green + Sensors ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', '#90EE90',
             group='routes')
