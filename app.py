@@ -62,16 +62,23 @@ def route_trace(G, route, name='Route', color='blue', group=None, group_title=No
 
 if __name__ == "__main__":
 
-    parser = ap.ArgumentParser()
-    parser.add_argument('--origin', type=str)
-    parser.add_argument('--destination', type=str)
+    parser = ap.ArgumentParser(
+        #description = "Compute green routes minimizing the exposure to air pollutants",
+        formatter_class=lambda prog: ap.HelpFormatter(prog,max_help_position=33))
+    parser.add_argument('--origin', type=str, help='address of the origin point')
+    parser.add_argument('--destination', type=str, help='address of the destination point')
     parser.add_argument('--historical', type=str,
-        default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
-    parser.add_argument('--sensors', type=str)
-    parser.add_argument('--sensor-radius', type=int, default=1)
-    parser.add_argument('--mamp-epochs', type=int, default=2)
-    parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
-    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],
+        default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'),
+        help='path to the *.pkl file containing the historical air quality data')
+    parser.add_argument('--sensors', type=str,
+        help='path to the *.json file containing the real-time air quality data')
+    parser.add_argument('--sensor-radius', type=int, default=1,
+        help='extend the air quality value of each sensor to its neighbors (up to the specified number of hops)')
+    parser.add_argument('--mamp-epochs', type=int, default=2,
+        help='number of epochs of the MAMP interpolation algorithm')
+    parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2',
+        help='pollutant for the air quality data')
+    parser.add_argument('--map-style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],
         default='carto-positron')
     args, additional = parser.parse_known_args()
 
@@ -224,7 +231,7 @@ if __name__ == "__main__":
         return 0.95 * zoom, (center_x, center_y)
     zoom, center = auto_zoom(G, shortest_route + historical_route)
     fig.update_layout(
-        mapbox_style = args.style,
+        mapbox_style = args.map_style,
         mapbox_zoom = zoom,
         mapbox_center = {
             'lon': center[0],
