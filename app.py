@@ -12,6 +12,58 @@ import re
 from mamp import MAMP, expand_mask
 
 
+def point_trace(point, name='Point', color='black', label=None, group=None, group_title=None):
+    if color is not None:
+        if not color.startswith('#'):
+            color = webcolors.name_to_hex(color)
+        rgb = webcolors.hex_to_rgb(color)
+        # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L43 +
+        # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L63
+        color_is_dark = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 128
+    return go.Scattermapbox(
+        lat = [point[0]],
+        lon = [point[1]],
+        mode = 'markers+text',
+        marker = dict(
+            size = 14 if label is None else 30,
+            color = color
+        ),
+        name = name,
+        text = label,
+        hovertemplate = f'{name}',
+        textfont = dict(color='white') if color_is_dark else None,
+        legendgroup=group,
+        legendgrouptitle_text=group_title,
+    )
+
+
+def decompose_coordinates(G, coordinate_list):
+    X = []
+    Y = []
+    for i in coordinate_list:
+        point = G.nodes[i]
+        X.append(point['x'])
+        Y.append(point['y'])
+    return X, Y
+
+
+def route_trace(G, route, name='Route', color='blue', group=None, group_title=None):
+    X, Y = decompose_coordinates(G, route)
+    return go.Scattermapbox(
+        lon = X,
+        lat = Y,
+        name = name,
+        mode = 'lines',
+        line = dict(
+            width = 4.5,
+            color = color
+        ),
+        hovertemplate = f'{name}',
+        legendgroup=group,
+        legendgrouptitle_text=group_title,
+    )
+
+
 if __name__ == "__main__":
 
     parser = ap.ArgumentParser()
@@ -29,6 +81,9 @@ if __name__ == "__main__":
     with open(args.historical, 'rb') as f:
         G = pickle.load(f)
 
+    # generate map
+    fig = go.Figure()
+
     # compute coordinates of origin and destination points
     origin_point = np.array(ox.geocode(args.origin))
     destination_point = np.array(ox.geocode(args.destination))
@@ -36,6 +91,10 @@ if __name__ == "__main__":
     # compute nodes on the graph corresponding to origin and destination points
     origin_node = ox.nearest_nodes(G, origin_point[1], origin_point[0])
     destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
+
+    # show origin and destination points
+    fig.add_trace(point_trace(origin_point, args.origin, 'black', group='origin', group_title='Origin'))
+    fig.add_trace(point_trace(destination_point, args.destination, 'red', group='destination', group_title='Destination'))
 
     # air quality index function
     def aqi(edge_data):
@@ -59,74 +118,10 @@ if __name__ == "__main__":
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
     shortest_exposure = nx.path_weight(G, shortest_route, 'exposure')
-    print(f'Shortest route total distance: {shortest_distance:.2f} m')
-    print(f'Shortest route total exposure: {shortest_exposure:.2f}')
-    shortest_X = []
-    shortest_Y = []
-    for i in shortest_route:
-        point = G.nodes[i]
-        shortest_X.append(point['x'])
-        shortest_Y.append(point['y'])
 
-    # compute green route
-    green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
-    green_distance = nx.path_weight(G, green_route, 'length')
-    print(f'Green route (historical data) total distance: {green_distance:.2f} m')
-    print(f'Green route (historical data) total exposure: {green_exposure:.2f}')
-    green_X = []
-    green_Y = []
-    for i in green_route:
-        point = G.nodes[i]
-        green_X.append(point['x'])
-        green_Y.append(point['y'])
-
-    # compute KPIs (%)
-    exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
-    distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
-    print(f'{args.pollutant.upper()} exposure difference: {-exposure_reduction_percentage:+.2f}%')
-    print(f'Distance difference: {distance_increase_percentage:+.2f}%')
-
-    # generate map
-    fig = go.Figure()
-
-    def plot_point(fig, point, name='Point', color='black', label=None, group=None, group_title=None):
-        if color is not None:
-            if not color.startswith('#'):
-                color = webcolors.name_to_hex(color)
-            rgb = webcolors.hex_to_rgb(color)
-            # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L43 +
-            # https://github.com/bgrins/TinyColor/blob/b49018c9f2dbca313d80d7a4dad25e26143cfe01/mod.js#L63
-            color_is_dark = (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114) < 128
-        fig.add_trace(go.Scattermapbox(
-            lat = [point[0]],
-            lon = [point[1]],
-            mode = 'markers+text',
-            marker = dict(
-                size = 14 if label is None else 30,
-                color = color
-            ),
-            name = name,
-            text = label,
-            hovertemplate = f'{name}',
-            textfont = dict(color='white') if color_is_dark else None,
-            legendgroup=group,
-            legendgrouptitle_text=group_title,
-        ))
-
-    def plot_route(fig, X, Y, name='Route', color='blue', group=None, group_title=None):
-        fig.add_trace(go.Scattermapbox(
-            lon = X,
-            lat = Y,
-            name = name,
-            mode = 'lines',
-            line = dict(
-                width = 4.5,
-                color = color
-            ),
-            hovertemplate = f'{name}',
-            legendgroup=group,
-            legendgrouptitle_text=group_title,
-        ))
+    # compute green route based on historical data
+    historical_exposure, historical_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
+    historical_distance = nx.path_weight(G, historical_route, 'length')
 
     # html names for pullutants
     pollutants = {
@@ -135,17 +130,9 @@ if __name__ == "__main__":
         'pm10': 'PM<sub>10</sub>',
     }
 
-    # add elements to the map
-    plot_point(fig, origin_point, args.origin, 'black', group='origin', group_title='Origin')
-    plot_point(fig, destination_point, args.destination, 'red', group='destination', group_title='Destination')
-    plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distance:.0f} m)', 'blue',
-        group='routes', group_title='Routes')
-    plot_route(fig, green_X, green_Y,
-        f'Green ({green_distance:.0f} m, {-exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green',
-        group='routes')
-
-    # show sensor data if available
+    # incorporate sensor data if available
     if args.sensors is not None:
+        sensor_traces = []
         sensor_nodes_aqi = {}
         with open(args.sensors) as f:
             sensors = json.load(f)
@@ -156,15 +143,15 @@ if __name__ == "__main__":
                 for measure in sensor['measures']:
                     if args.pollutant.upper() == re.sub(r'<[^>]+>', '', measure['acronym']):
                         sensor_nodes_aqi[sensor_node] = int(measure['value'])
-                        plot_point(
-                            fig,
+                        # create sensors' traces to plot them later
+                        sensor_traces.append(point_trace(
                             (sensor['latitude'], sensor['longitude']),
                             name = f"{sensor['name']}: {measure['value']} {measure['unit']} {pollutants[args.pollutant]}",
                             color = measure['color'],
                             label = measure['value'],
                             group='sensors',
                             group_title=f'Sensors ({datetime})' if legend_first else None
-                        )
+                        ))
                 legend_first = False
         # extend the sensors' values for the desired number of hops
         mask = expand_mask(G, sensor_nodes_aqi, args.sensor_radius)
@@ -173,30 +160,58 @@ if __name__ == "__main__":
         # recompute exposure with updated air quality values
         for u, v, k in G.edges:
             G[u][v][k]['exposure'] = exposure(G[u][v][k])
-        # recompute green route with updated exposure data
-        green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
         shortest_exposure = nx.path_weight(G, shortest_route, 'exposure')
-        green_distance = nx.path_weight(G, green_route, 'length')
-        print(f'Green route (historical + real-time data) total distance: {green_distance:.2f} m')
-        print(f'Green route (historical + real-time data) total exposure: {green_exposure:.2f}')
-        green_X = []
-        green_Y = []
-        for i in green_route:
-            point = G.nodes[i]
-            green_X.append(point['x'])
-            green_Y.append(point['y'])
-        # recompute KPIs (%)
-        exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
-        distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
-        print(f'{args.pollutant.upper()} exposure difference: {-exposure_reduction_percentage:+.2f}%')
-        print(f'Distance difference: {distance_increase_percentage:+.2f}%')
-        # plot new route
-        plot_route(fig, green_X, green_Y,
-            f'Green + Sensors ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', '#90EE90',
-            group='routes')
+        historical_exposure = nx.path_weight(G, historical_route, 'exposure')
+        # compute green route based on real-time data
+        realtime_exposure, realtime_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
+        realtime_distance = nx.path_weight(G, realtime_route, 'length')
+
+    # compute and show KPIs (%)
+    def compute_kpis(shortest_distance, shortest_exposure, green_distance, green_exposure):
+        exposure_diff_percentage = 100 * (green_exposure - shortest_exposure) / shortest_exposure
+        distance_diff_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
+        print(f'{args.pollutant.upper()} exposure difference: {exposure_diff_percentage:+.2f}%')
+        print(f'Distance difference: {distance_diff_percentage:+.2f}%')
+        return exposure_diff_percentage, distance_diff_percentage
+
+    print(f'Shortest route total distance: {shortest_distance:.2f} m')
+    print(f'Shortest route total exposure: {shortest_exposure:.2f}')
+    print(f'Green route (historical data) total distance: {historical_distance:.2f} m')
+    print(f'Green route (historical data) total exposure: {historical_exposure:.2f}')
+    historical_exposure_diff, historical_distance_diff = compute_kpis(
+        shortest_distance, shortest_exposure, historical_distance, historical_exposure)
+
+    if args.sensors is not None:
+        print(f'Green route (historical + real-time data) total distance: {realtime_distance:.2f} m')
+        print(f'Green route (historical + real-time data) total exposure: {realtime_exposure:.2f}')
+        realtime_exposure_diff, realtime_distance_diff = compute_kpis(
+            shortest_distance, shortest_exposure, realtime_distance, realtime_exposure)
+
+    # create routes' traces to plot them later
+    route_traces = []
+    route_traces.append(route_trace(G, shortest_route, f'Shortest ({shortest_distance:.0f} m)', 'blue',
+        group='routes', group_title='Routes'))
+    route_traces.append(route_trace(G, historical_route, '{0} ({1:.0f} m, {2:+.0f}% {3})'.format(
+        'Green' if args.sensors is None else 'Historical',
+        historical_distance,
+        historical_exposure_diff,
+        pollutants[args.pollutant]
+    ), 'green', group='routes'))
+    if args.sensors is not None:
+        route_traces.append(route_trace(G, realtime_route,
+            f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})', '#90EE90',
+            group='routes'))
+
+    # add traces to the figure
+    for trace in route_traces:
+        fig.add_trace(trace)
+    if args.sensors is not None:
+        for trace in sensor_traces:
+            fig.add_trace(trace)
 
     # show the map
-    def auto_zoom(X, Y):
+    def auto_zoom(G, coordinate_list):
+        X, Y = decompose_coordinates(G, coordinate_list)
         from shapely.geometry import MultiPoint
         multi_point = MultiPoint(list(zip(X, Y)))
         bounding_box = multi_point.bounds
@@ -209,7 +224,7 @@ if __name__ == "__main__":
             fp = [20, 17, 16, 15, 14, 7, 5]
         )
         return 0.95 * zoom, (center_x, center_y)
-    zoom, center = auto_zoom(shortest_X + green_X, shortest_Y + green_Y)
+    zoom, center = auto_zoom(G, shortest_route + historical_route)
     fig.update_layout(
         mapbox_style = args.style,
         mapbox_zoom = zoom,
