@@ -11,7 +11,6 @@ import re
 
 from mamp import MAMP, expand_mask
 
-
 def point_trace(point, name='Point', color='black', label=None, group=None, group_title=None):
     if color is not None:
         if not color.startswith('#'):
@@ -36,7 +35,6 @@ def point_trace(point, name='Point', color='black', label=None, group=None, grou
         legendgrouptitle_text=group_title,
     )
 
-
 def decompose_coordinates(G, coordinate_list):
     X = []
     Y = []
@@ -45,7 +43,6 @@ def decompose_coordinates(G, coordinate_list):
         X.append(point['x'])
         Y.append(point['y'])
     return X, Y
-
 
 def route_trace(G, route, name='Route', color='blue', group=None, group_title=None):
     X, Y = decompose_coordinates(G, route)
@@ -62,7 +59,6 @@ def route_trace(G, route, name='Route', color='blue', group=None, group_title=No
         legendgroup=group,
         legendgrouptitle_text=group_title,
     )
-
 
 if __name__ == "__main__":
 
