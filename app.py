@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('--destination', type=str)
     parser.add_argument('--historical', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--sensors', type=str)
-    parser.add_argument('--sensor-radius', type=int, default=0)
+    parser.add_argument('--sensor-radius', type=int, default=1)
     parser.add_argument('--mamp-epochs', type=int, default=2)
     parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
@@ -83,8 +83,8 @@ if __name__ == "__main__":
     # compute KPIs (%)
     exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
     distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
-    print(f'{args.pollutant.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
-    print(f'Distance increase: +{distance_increase_percentage:.2f}%')
+    print(f'{args.pollutant.upper()} exposure difference: {-exposure_reduction_percentage:+.2f}%')
+    print(f'Distance difference: {distance_increase_percentage:+.2f}%')
 
     # generate map
     fig = go.Figure()
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     plot_route(fig, shortest_X, shortest_Y, f'Shortest ({shortest_distance:.0f} m)', 'blue',
         group='routes', group_title='Routes')
     plot_route(fig, green_X, green_Y,
-        f'Green ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green',
+        f'Green ({green_distance:.0f} m, {-exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', 'green',
         group='routes')
 
     # show sensor data if available
@@ -169,12 +169,13 @@ if __name__ == "__main__":
         # extend the sensors' values for the desired number of hops
         mask = expand_mask(G, sensor_nodes_aqi, args.sensor_radius)
         # run MAMP algorithm
-        MAMP(G, {**mask, **sensor_nodes_aqi}, sensor_nodes_aqi, max_epochs=args.mamp_epochs)
+        G = MAMP(G, {**mask, **sensor_nodes_aqi}, sensor_nodes_aqi, max_epochs=args.mamp_epochs)
         # recompute exposure with updated air quality values
         for u, v, k in G.edges:
             G[u][v][k]['exposure'] = exposure(G[u][v][k])
         # recompute green route with updated exposure data
         green_exposure, green_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='exposure')
+        shortest_exposure = nx.path_weight(G, shortest_route, 'exposure')
         green_distance = nx.path_weight(G, green_route, 'length')
         print(f'Green route (historical + real-time data) total distance: {green_distance:.2f} m')
         print(f'Green route (historical + real-time data) total exposure: {green_exposure:.2f}')
@@ -184,14 +185,14 @@ if __name__ == "__main__":
             point = G.nodes[i]
             green_X.append(point['x'])
             green_Y.append(point['y'])
-        plot_route(fig, green_X, green_Y,
-            f'Green + Sensors ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', '#90EE90',
-            group='routes')
         # recompute KPIs (%)
         exposure_reduction_percentage = 100 * (shortest_exposure - green_exposure) / shortest_exposure
         distance_increase_percentage = 100 * (green_distance - shortest_distance) / shortest_distance
-        print(f'{args.pollutant.upper()} exposure reduction: -{exposure_reduction_percentage:.2f}%')
-        print(f'Distance increase: +{distance_increase_percentage:.2f}%')
+        print(f'{args.pollutant.upper()} exposure difference: {-exposure_reduction_percentage:+.2f}%')
+        print(f'Distance difference: {distance_increase_percentage:+.2f}%')
+        plot_route(fig, green_X, green_Y,
+            f'Green + Sensors ({green_distance:.0f} m, -{exposure_reduction_percentage:.0f}% {pollutants[args.pollutant]})', '#90EE90',
+            group='routes')
 
     # show the map
     def auto_zoom(X, Y):

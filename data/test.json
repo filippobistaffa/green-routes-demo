@@ -1,0 +1,201 @@
+[
+  {
+    "code": "I2",
+    "name": "Poblenou",
+    "latitude": "41.403881",
+    "longitude": "2.204523",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "8",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      },
+      {
+        "parameter_code": "12",
+        "parameter": "Part\u00edcules en suspensi\u00f3 menors de 10 \u00b5m (PM\u2081\u2080)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "24",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "raonablement_bona",
+        "status_text": "Raonablement bona",
+        "color": "#32a15d",
+        "acronym": "PM<sub>10</sub>"
+      }
+    ]
+  },
+  {
+    "code": "ID",
+    "name": "Sants",
+    "latitude": "41.378803",
+    "longitude": "2.133098",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "4",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      }
+    ]
+  },
+  {
+    "code": "IH",
+    "name": "Eixample",
+    "latitude": "41.385342",
+    "longitude": "2.153822",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "22",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      },
+      {
+        "parameter_code": "12",
+        "parameter": "Part\u00edcules en suspensi\u00f3 menors de 10 \u00b5m (PM\u2081\u2080)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "21",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "raonablement_bona",
+        "status_text": "Raonablement bona",
+        "color": "#32a15d",
+        "acronym": "PM<sub>10</sub>"
+      }
+    ]
+  },
+  {
+    "code": "IJ",
+    "name": "Gr\u00e0cia",
+    "latitude": "41.398743",
+    "longitude": "2.153385",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "99",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#a35ba5",
+        "acronym": "NO<sub>2</sub>"
+      }
+    ]
+  },
+  {
+    "code": "IL",
+    "name": "Ciutadella",
+    "latitude": "41.386414",
+    "longitude": "2.187417",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "11",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      }
+    ]
+  },
+  {
+    "code": "IN",
+    "name": "Vall d'Hebron",
+    "latitude": "41.426079",
+    "longitude": "2.147992",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "5",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      },
+      {
+        "parameter_code": "12",
+        "parameter": "Part\u00edcules en suspensi\u00f3 menors de 10 \u00b5m (PM\u2081\u2080)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "22",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "raonablement_bona",
+        "status_text": "Raonablement bona",
+        "color": "#32a15d",
+        "acronym": "PM<sub>10</sub>"
+      }
+    ]
+  },
+  {
+    "code": "IZ",
+    "name": "Palau Reial",
+    "latitude": "41.387486",
+    "longitude": "2.115150",
+    "measures": [
+      {
+        "parameter_code": "03",
+        "parameter": "Di\u00f2xid de nitrogen (NO\u2082)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "6",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "NO<sub>2</sub>"
+      },
+      {
+        "parameter_code": "12",
+        "parameter": "Part\u00edcules en suspensi\u00f3 menors de 10 \u00b5m (PM\u2081\u2080)",
+        "unit": "\u00b5g/m\u00b3",
+        "date": "21/4/2024",
+        "time": "19:00",
+        "value": "2",
+        "datetime": "2024-04-21 19:00:00",
+        "status": "bona",
+        "status_text": "Bona",
+        "color": "#37a2ce",
+        "acronym": "PM<sub>10</sub>"
+      }
+    ]
+  }
+]
