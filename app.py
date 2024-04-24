@@ -69,12 +69,14 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     parser.add_argument('--origin', type=str)
     parser.add_argument('--destination', type=str)
-    parser.add_argument('--historical', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
+    parser.add_argument('--historical', type=str,
+        default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--sensors', type=str)
     parser.add_argument('--sensor-radius', type=int, default=1)
     parser.add_argument('--mamp-epochs', type=int, default=2)
     parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
-    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
+    parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],
+        default='carto-positron')
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
@@ -199,8 +201,8 @@ if __name__ == "__main__":
     ), 'green', group='routes'))
     if args.sensors is not None:
         route_traces.append(route_trace(G, realtime_route,
-            f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})', '#90EE90',
-            group='routes'))
+            f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
+            '#90EE90', group='routes'))
 
     # add traces to the figure
     for trace in route_traces:
