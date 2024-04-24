@@ -9,7 +9,7 @@ import json
 import os
 import re
 
-from mamp import MAMP
+from mamp import MAMP, expand_mask
 
 
 if __name__ == "__main__":
@@ -19,6 +19,8 @@ if __name__ == "__main__":
     parser.add_argument('--destination', type=str)
     parser.add_argument('--historical', type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'))
     parser.add_argument('--sensors', type=str)
+    parser.add_argument('--sensor-radius', type=int, default=0)
+    parser.add_argument('--mamp-epochs', type=int, default=2)
     parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2')
     parser.add_argument('--style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'], default='carto-positron')
     args, additional = parser.parse_known_args()
@@ -45,10 +47,14 @@ if __name__ == "__main__":
             aqi_value = (aqi_range[0] + aqi_range[0]) / 2
         return aqi_value
 
+    # exposure function
+    def exposure(edge_data):
+        return edge_data['length'] * edge_data['aqi']
+
     # store air quality index and exposure on each edge
     for u, v, k in G.edges:
         G[u][v][k]['aqi'] = aqi(G[u][v][k])
-        G[u][v][k]['exposure'] = G[u][v][k]['length'] * G[u][v][k]['aqi']
+        G[u][v][k]['exposure'] = exposure(G[u][v][k])
 
     # compute shortest route
     shortest_distance, shortest_route = nx.bidirectional_dijkstra(G, origin_node, destination_node, weight='length')
@@ -160,7 +166,8 @@ if __name__ == "__main__":
                             group_title=f'Sensors ({datetime})' if legend_first else None
                         )
                 legend_first = False
-        MAMP(G, sensor_nodes_aqi)
+        mask = expand_mask(G, sensor_nodes_aqi, args.sensor_radius)
+        MAMP(G, {**mask, **sensor_nodes_aqi}, sensor_nodes_aqi, max_epochs=args.mamp_epochs)
 
     # show the map
     def auto_zoom(X, Y):
@@ -192,4 +199,4 @@ if __name__ == "__main__":
         },
         #hovermode = False
     )
-    fig.show()
+    #fig.show()
