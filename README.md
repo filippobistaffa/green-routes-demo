@@ -42,7 +42,7 @@ Usage
       --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP interpolation algorithm
       --map-style {open-street-map,carto-positron,carto-darkmatter}
 
-Examples
+Examples with Historical Data
 ----------
 Input:
 
@@ -73,3 +73,25 @@ Output:
     Distance difference: +14.54%
 
 ![littlefern](./img/littlefern.png)
+
+Examples with Historical Data + Real-Time Data
+----------
+Input:
+
+    python3 green-route.py --origin "Carrer Ros de Olano 15, Barcelona" --destination "Avinguda Diagonal 482, Barcelona" --real-time data/test.json
+
+Output:
+
+    Running MAMP algorithm
+    Shortest route total distance: 825.64 m
+    Shortest route total exposure: 31655.12
+    Green route (historical data) total distance: 825.64 m
+    Green route (historical data) total exposure: 31655.12
+    NO2 exposure difference: +0.00%
+    Distance difference: +0.00%
+    Green route (historical + real-time data) total distance: 844.01 m
+    Green route (historical + real-time data) total exposure: 25331.26
+    NO2 exposure difference: -19.98%
+    Distance difference: +2.22%
+
+![realtime](./img/realtime.png)
