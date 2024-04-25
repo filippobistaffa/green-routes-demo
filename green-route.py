@@ -155,8 +155,7 @@ if __name__ == "__main__":
                             color = measure['color'],
                             label = measure['value'],
                             group='sensors',
-                            group_title=f'Sensors ({datetime})' if legend_first else None
-                        ))
+                            group_title=f'Sensors ({datetime})' if legend_first else None))
                 legend_first = False
         # extend the sensors' values for the desired number of hops
         mask = expand_mask(G, sensor_nodes_aqi, args.sensor_radius)
@@ -197,11 +196,8 @@ if __name__ == "__main__":
     route_traces.append(route_trace(G, shortest_route, f'Shortest ({shortest_distance:.0f} m)', 'blue',
         group='routes', group_title='Routes'))
     route_traces.append(route_trace(G, historical_route, '{0} ({1:.0f} m, {2:+.0f}% {3})'.format(
-        'Green' if args.sensors is None else 'Historical',
-        historical_distance,
-        historical_exposure_diff,
-        pollutants[args.pollutant]
-    ), 'green', group='routes'))
+        'Green' if args.sensors is None else 'Historical', historical_distance,
+        historical_exposure_diff, pollutants[args.pollutant]), 'green', group='routes'))
     if args.sensors is not None:
         route_traces.append(route_trace(G, realtime_route,
             f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
@@ -226,8 +222,7 @@ if __name__ == "__main__":
         zoom = np.interp(
             x = area,
             xp = [0, 5**-10, 4**-10, 3**-10, 2**-10, 1**-10, 1**-5],
-            fp = [20, 17, 16, 15, 14, 7, 5]
-        )
+            fp = [20, 17, 16, 15, 14, 7, 5])
         return 0.95 * zoom, (center_x, center_y)
     zoom, center = auto_zoom(G, shortest_route + historical_route)
     fig.update_layout(
