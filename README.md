@@ -58,3 +58,18 @@ Output:
     Distance difference: +3.69%
 
 ![sagradafamilia](./img/sagradafamilia.png)
+
+Input:
+
+    python3 green-route.py --origin "Plaça de Gal·la Placídia, Barcelona" --destination "Platja de la Mar Bella, Barcelona"
+
+Output:
+
+    Shortest route total distance: 5827.77 m
+    Shortest route total exposure: 184314.72
+    Green route (historical data) total distance: 6817.00 m
+    Green route (historical data) total exposure: 158450.29
+    NO2 exposure difference: -14.03%
+    Distance difference: +16.97%
+
+![marbella](./img/marbella.png)
