@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument('--sensor-radius', type=int, default=1,
         help='extend air quality value of each sensor to its neighbors (up to specified number of hops)')
     parser.add_argument('--mamp-epochs', type=int, default=2,
-        help='number of epochs of the MAMP algorithm')
+        help='number of epochs of the MAMP interpolation algorithm')
     parser.add_argument('--pollutant', type=str, choices=['no2', 'pm25', 'pm10'], default='no2',
         help='pollutant to consider for air quality data')
     parser.add_argument('--map-style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],

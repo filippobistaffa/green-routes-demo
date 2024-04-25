@@ -15,6 +15,6 @@
       --sensors SENSORS              *.json file containing real-time air quality data
       --sensor-radius SENSOR_RADIUS  extend air quality value of each sensor to its
                                      neighbors (up to specified number of hops)
-      --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP algorithm
+      --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP interpolation algorithm
       --pollutant {no2,pm25,pm10}    pollutant to consider for air quality data
       --map-style {open-street-map,carto-positron,carto-darkmatter}
