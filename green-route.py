@@ -70,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument('--historical', type=str,
         default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', '2022_graph_aqi.pkl'),
         help='*.pkl file containing historical air quality data')
-    parser.add_argument('--sensors', type=str,
+    parser.add_argument('--real-time', type=str,
         help='*.json file containing real-time air quality data')
     parser.add_argument('--sensor-radius', type=int, default=1,
         help='extend air quality value of each sensor to its neighbors (up to specified number of hops)')
@@ -136,10 +136,10 @@ if __name__ == "__main__":
     }
 
     # incorporate sensor data if available
-    if args.sensors is not None:
+    if args.real_time is not None:
         sensor_traces = []
         sensor_nodes_aqi = {}
-        with open(args.sensors) as f:
+        with open(args.real_time) as f:
             sensors = json.load(f)
             datetime = sensors[0]['measures'][0]['datetime']
             legend_first = True
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     historical_exposure_diff, historical_distance_diff = compute_kpis(
         shortest_distance, shortest_exposure, historical_distance, historical_exposure)
 
-    if args.sensors is not None:
+    if args.real_time is not None:
         print(f'Green route (historical + real-time data) total distance: {realtime_distance:.2f} m')
         print(f'Green route (historical + real-time data) total exposure: {realtime_exposure:.2f}')
         realtime_exposure_diff, realtime_distance_diff = compute_kpis(
@@ -196,9 +196,9 @@ if __name__ == "__main__":
     route_traces.append(route_trace(G, shortest_route, f'Shortest ({shortest_distance:.0f} m)', 'blue',
         group='routes', group_title='Routes'))
     route_traces.append(route_trace(G, historical_route, '{0} ({1:.0f} m, {2:+.0f}% {3})'.format(
-        'Green' if args.sensors is None else 'Historical', historical_distance,
+        'Green' if args.real_time is None else 'Historical', historical_distance,
         historical_exposure_diff, pollutants[args.pollutant]), 'green', group='routes'))
-    if args.sensors is not None:
+    if args.real_time is not None:
         route_traces.append(route_trace(G, realtime_route,
             f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
             '#90EE90', group='routes'))
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     # add traces to the figure
     for trace in route_traces:
         fig.add_trace(trace)
-    if args.sensors is not None:
+    if args.real_time is not None:
         for trace in sensor_traces:
             fig.add_trace(trace)
 

@@ -2,7 +2,7 @@
 
 
     usage: green-route.py [-h] [--origin ORIGIN] [--destination DESTINATION]
-                          [--historical HISTORICAL] [--sensors SENSORS]
+                          [--historical HISTORICAL] [--real-time REAL_TIME]
                           [--sensor-radius SENSOR_RADIUS] [--mamp-epochs MAMP_EPOCHS]
                           [--pollutant {no2,pm25,pm10}]
                           [--map-style {open-street-map,carto-positron,carto-darkmatter}]
@@ -12,7 +12,7 @@
       --origin ORIGIN                address of origin point
       --destination DESTINATION      address of destination point
       --historical HISTORICAL        *.pkl file containing historical air quality data
-      --sensors SENSORS              *.json file containing real-time air quality data
+      --real-time REAL_TIME          *.json file containing real-time air quality data
       --sensor-radius SENSOR_RADIUS  extend air quality value of each sensor to its
                                      neighbors (up to specified number of hops)
       --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP interpolation algorithm
