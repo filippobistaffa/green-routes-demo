@@ -4,7 +4,7 @@ This repository contains a prototype application recommending green routes for p
 
 Dataset
 ----------
-This prototype employs the must up-to-date (2022) real historical data from the [Open Data BCN portal](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/mapes-immissio-qualitat-aire) (see [`data`](data) folder) and [real-time data from air quality sensors in Barcelona](https://ajuntament.barcelona.cat/qualitataire/es). Real-time data can be fetched with the [`fetch_real_time_data.py`](data/fetch_real_time_data.py) script.
+This prototype employs the most up-to-date (2022) [historical air quality data](https://ajuntament.barcelona.cat/mapes-dades-ambientals/qualitataire/es/) from the [Open Data BCN portal](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/mapes-immissio-qualitat-aire) (see [`data`](data) folder) and [real-time data from air quality sensors in Barcelona](https://ajuntament.barcelona.cat/qualitataire/es). Real-time data can be fetched with the [`fetch_real_time_data.py`](data/fetch_real_time_data.py) script.
 
 Dependencies
 ----------
