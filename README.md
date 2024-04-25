@@ -41,3 +41,20 @@ Usage
                                      neighbors (up to specified number of hops)
       --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP interpolation algorithm
       --map-style {open-street-map,carto-positron,carto-darkmatter}
+
+Examples
+----------
+Input:
+
+    python3 green-route.py --origin "Plaça de Catalunya, Barcelona" --destination "Sagrada Familia, Barcelona"
+
+Output:
+
+    Shortest route total distance: 2777.77 m
+    Shortest route total exposure: 108216.09
+    Green route (historical data) total distance: 2880.22 m
+    Green route (historical data) total exposure: 100394.24
+    NO2 exposure difference: -7.23%
+    Distance difference: +3.69%
+
+![sagradafamilia](./img/sagradafamilia.png)
