@@ -4,7 +4,7 @@ This repository contains a prototype application recommending green routes for p
 
 Dataset
 ----------
-This prototype employs both real historical data from the [Open Data BCN portal](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/mapes-immissio-qualitat-aire) (see [`data`](data) folder) and [real-time data from air quality sensors in Barcelona](https://ajuntament.barcelona.cat/qualitataire/es). Real-time data can be fetched with the [`fetch_real_time_data.py`](data/fetch_real_time_data.py) script.
+This prototype employs the must up-to-date (2022) real historical data from the [Open Data BCN portal](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/mapes-immissio-qualitat-aire) (see [`data`](data) folder) and [real-time data from air quality sensors in Barcelona](https://ajuntament.barcelona.cat/qualitataire/es). Real-time data can be fetched with the [`fetch_real_time_data.py`](data/fetch_real_time_data.py) script.
 
 Dependencies
 ----------
@@ -17,6 +17,9 @@ Required dependencies can then be installed via `pip` with the following command
 
     pip install --upgrade -r requirements.txt
 
+Historical Data Preprocessing
+----------
+The historical data provided by Open Data BCN contains an AQI measurement for each edge of the [road graph published on the same portal](https://opendata-ajuntament.barcelona.cat/data/ca/dataset/mapa-graf-viari-carrers-wms). Since this project employs the much more detailed road graph from OpenStreetMap (OSM) via [`osmnx`](https://osmnx.readthedocs.io/en/stable/), it is necessary to assign an AQI value to each edge of the OSM graph. This is achieved first by assembling the data for [NO<sub>2</sub>](data/2022_tramer_no2_mapa_qualitat_aire_bcn.gpkg), [PM<sub>2.5</sub>](data/2022_tramer_pm2-5_mapa_qualitat_aire_bcn.gpkg), [PM<sub>10</sub>](data/2022_tramer_pm10_mapa_qualitat_aire_bcn.gpkg) into [one data source](data/2022_locations_aqi.csv) with [`process_historical_data.py`](data/process_historical_data.py) and then by assigning to each edge in the OSM road graph the value of the closest edge in the original road graph using a *Ball Tree* data structure for optimal efficiency (see [`precompute_graph.py`](data/precompute_graph.py)). The output is the [`2022_graph_aqi.pkl`](data/2022_graph_aqi.pkl) file that embeds all the necessary spatial and AQI information needed by [`green-route.py`](green-route.py).
 
 Usage
 ----------
