@@ -61,15 +61,15 @@ Output:
 
 Input:
 
-    python3 green-route.py --origin "Plaça de Gal·la Placídia, Barcelona" --destination "Platja de la Mar Bella, Barcelona"
+    python3 green-route.py --origin "Carrer Ros de Olano 15, Barcelona" --destination "Little Fern, Barcelona"
 
 Output:
 
-    Shortest route total distance: 5827.77 m
-    Shortest route total exposure: 184314.72
-    Green route (historical data) total distance: 6817.00 m
-    Green route (historical data) total exposure: 158450.29
-    NO2 exposure difference: -14.03%
-    Distance difference: +16.97%
+    Shortest route total distance: 4289.07 m
+    Shortest route total exposure: 146715.41
+    Green route (historical data) total distance: 4912.71 m
+    Green route (historical data) total exposure: 114107.55
+    NO2 exposure difference: -22.23%
+    Distance difference: +14.54%
 
-![marbella](./img/marbella.png)
+![littlefern](./img/littlefern.png)
