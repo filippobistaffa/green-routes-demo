@@ -35,11 +35,11 @@ def point_trace(point, name='Point', color='black', label=None, group=None, grou
         legendgrouptitle_text=group_title,
     )
 
-def decompose_coordinates(G, coordinate_list):
+def decompose_coordinates(G, nodes):
     X = []
     Y = []
-    for i in coordinate_list:
-        point = G.nodes[i]
+    for node in nodes:
+        point = G.nodes[node]
         X.append(point['x'])
         Y.append(point['y'])
     return X, Y
@@ -243,8 +243,8 @@ if __name__ == "__main__":
             fig.add_trace(trace)
 
     # show the map
-    def auto_zoom(G, coordinate_list):
-        X, Y = decompose_coordinates(G, coordinate_list)
+    def auto_zoom(G, nodes):
+        X, Y = decompose_coordinates(G, nodes)
         from shapely.geometry import MultiPoint
         multi_point = MultiPoint(list(zip(X, Y)))
         bounding_box = multi_point.bounds
