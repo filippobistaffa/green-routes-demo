@@ -78,6 +78,7 @@ if __name__ == "__main__":
         help='extend air quality value of each sensor to its neighbors (up to specified number of hops)')
     parser.add_argument('--mamp-epochs', type=int, default=2,
         help='number of epochs of the MAMP interpolation algorithm')
+    parser.add_argument('--export-json', type=str, help='export results to *.json')
     parser.add_argument('--map-style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],
         default='carto-positron')
     args, additional = parser.parse_known_args()
@@ -202,6 +203,37 @@ if __name__ == "__main__":
         route_traces.append(route_trace(G, realtime_route,
             f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
             '#90EE90', group='routes'))
+
+    if args.export_json is not None:
+        json_data = {
+            'origin': {
+                'address': args.origin,
+                'coordinates': origin_point.tolist()
+            },
+            'destination': {
+                'address': args.destination,
+                'coordinates': destination_point.tolist()
+            },
+            'shortest': {
+                'route': list(zip(*decompose_coordinates(G, shortest_route))),
+                'distance': shortest_distance,
+                'exposure': shortest_exposure,
+            },
+            'historical': {
+                'route': list(zip(*decompose_coordinates(G, historical_route))),
+                'distance': historical_distance,
+                'exposure': historical_exposure,
+            }
+        }
+        if args.real_time is not None:
+            json_data['real-time'] = {
+                'route': list(zip(*decompose_coordinates(G, realtime_route))),
+                'distance': realtime_distance,
+                'exposure': realtime_exposure,
+            }
+        with open(args.export_json, 'w') as f:
+            json.dump(json_data, f, indent=2)
+            print(f'Results written to {args.export_json}')
 
     # add traces to the figure
     for trace in route_traces:

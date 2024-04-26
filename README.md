@@ -27,7 +27,7 @@ Usage
     usage: green-route.py [-h] [--origin ORIGIN] [--destination DESTINATION]
                           [--pollutant {no2,pm25,pm10}] [--historical HISTORICAL]
                           [--real-time REAL_TIME] [--sensor-radius SENSOR_RADIUS]
-                          [--mamp-epochs MAMP_EPOCHS]
+                          [--mamp-epochs MAMP_EPOCHS] [--export-json EXPORT_JSON]
                           [--map-style {open-street-map,carto-positron,carto-darkmatter}]
     
     options:
@@ -40,6 +40,7 @@ Usage
       --sensor-radius SENSOR_RADIUS  extend air quality value of each sensor to its
                                      neighbors (up to specified number of hops)
       --mamp-epochs MAMP_EPOCHS      number of epochs of the MAMP interpolation algorithm
+      --export-json EXPORT_JSON      export results to *.json
       --map-style {open-street-map,carto-positron,carto-darkmatter}
 
 Examples with Historical Data
