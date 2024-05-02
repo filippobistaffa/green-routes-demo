@@ -192,18 +192,6 @@ if __name__ == "__main__":
         realtime_exposure_diff, realtime_distance_diff = compute_kpis(
             shortest_distance, shortest_exposure, realtime_distance, realtime_exposure)
 
-    # create routes' traces to plot them later
-    route_traces = []
-    route_traces.append(route_trace(G, shortest_route, f'Shortest ({shortest_distance:.0f} m)', 'blue',
-        group='routes', group_title='Routes'))
-    route_traces.append(route_trace(G, historical_route, '{0} ({1:.0f} m, {2:+.0f}% {3})'.format(
-        'Green' if args.real_time is None else 'Historical', historical_distance,
-        historical_exposure_diff, pollutants[args.pollutant]), 'green', group='routes'))
-    if args.real_time is not None:
-        route_traces.append(route_trace(G, realtime_route,
-            f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
-            '#90EE90', group='routes'))
-
     if args.export_json is not None:
         json_data = {
             'origin': {
@@ -234,6 +222,18 @@ if __name__ == "__main__":
         with open(args.export_json, 'w') as f:
             json.dump(json_data, f, indent=2)
             print(f'Results written to {args.export_json}')
+
+    # create routes' traces to plot them later
+    route_traces = []
+    route_traces.append(route_trace(G, shortest_route, f'Shortest ({shortest_distance:.0f} m)', 'blue',
+        group='routes', group_title='Routes'))
+    route_traces.append(route_trace(G, historical_route, '{0} ({1:.0f} m, {2:+.0f}% {3})'.format(
+        'Green' if args.real_time is None else 'Historical', historical_distance,
+        historical_exposure_diff, pollutants[args.pollutant]), 'green', group='routes'))
+    if args.real_time is not None:
+        route_traces.append(route_trace(G, realtime_route,
+            f'Historical + Real-Time ({realtime_distance:.0f} m, {realtime_exposure_diff:+.0f}% {pollutants[args.pollutant]})',
+            '#90EE90', group='routes'))
 
     # add traces to the figure
     for trace in route_traces:
