@@ -112,3 +112,5 @@ We consider the following 10 turistic *Points of Interest* (POIs) in Barcelona:
 10. Turó de la Rovira
 
 ![pois](./img/pois.png)
+
+We then consider all the $10 \choose 2 = 45$ couples among the 10 above POIs and for each couple `(p1, p2)` we run `python3 green-route.py --origin p1 --destination p2` (considering historical data and NO<sub>2</sub> as the pollutant).
