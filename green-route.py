@@ -79,16 +79,13 @@ if __name__ == "__main__":
     parser.add_argument('--mamp-epochs', type=int, default=2,
         help='number of epochs of the MAMP interpolation algorithm')
     parser.add_argument('--export-json', type=str, help='export results to *.json')
-    parser.add_argument('--map-style', type=str, choices=['open-street-map', 'carto-positron', 'carto-darkmatter'],
+    parser.add_argument('--map-style', type=str, choices=['hide', 'open-street-map', 'carto-positron', 'carto-darkmatter'],
         default='carto-positron')
     args, additional = parser.parse_known_args()
 
     # load precomputed graph
     with open(args.historical, 'rb') as f:
         G = pickle.load(f)
-
-    # generate map
-    fig = go.Figure()
 
     # compute coordinates of origin and destination points
     origin_point = np.array(ox.geocode(args.origin))
@@ -97,10 +94,6 @@ if __name__ == "__main__":
     # compute nodes on the graph corresponding to origin and destination points
     origin_node = ox.nearest_nodes(G, origin_point[1], origin_point[0])
     destination_node = ox.nearest_nodes(G, destination_point[1], destination_point[0])
-
-    # show origin and destination points
-    fig.add_trace(point_trace(origin_point, args.origin, 'black', group='origin', group_title='Origin'))
-    fig.add_trace(point_trace(destination_point, args.destination, 'red', group='destination', group_title='Destination'))
 
     # air quality index function
     def aqi(edge_data):
@@ -222,6 +215,17 @@ if __name__ == "__main__":
         with open(args.export_json, 'w') as f:
             json.dump(json_data, f, indent=2)
             print(f'Results written to {args.export_json}')
+
+    # exit if showing map is not necessary
+    if args.map_style == 'hide':
+        quit()
+
+    # object for map
+    fig = go.Figure()
+
+    # show origin and destination points
+    fig.add_trace(point_trace(origin_point, args.origin, 'black', group='origin', group_title='Origin'))
+    fig.add_trace(point_trace(destination_point, args.destination, 'red', group='destination', group_title='Destination'))
 
     # create routes' traces to plot them later
     route_traces = []
