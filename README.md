@@ -96,3 +96,19 @@ Output:
     Distance difference: +2.22%
 
 ![realtime](./img/realtime.png)
+
+Experiments with POIs in Barcelona
+----------
+We consider the following 10 turistic *Points of Interest* (POIs) in Barcelona:
+1. Casa Batlló, Barcelona
+2. Plaça de Catalunya, Barcelona
+3. Platja del Bogatell, Barcelona
+4. Sagrada Familia, Barcelona
+5. Parc de la Ciutadella, Barcelona
+6. Platja de la Barceloneta, Barcelona
+7. Camp Nou, Barcelona
+8. Estadi Olimpic, Barcelona
+9. Recinte Modernista, Barcelona
+10. Turó de la Rovira, Barcelona
+
+![pois](./img/pois.png)
