@@ -47,7 +47,7 @@ Examples with Historical Data
 ----------
 Input:
 
-    python3 green-route.py --origin "Plaça de Catalunya, Barcelona" --destination "Sagrada Familia, Barcelona"
+    python3 green-route.py --origin "Plaça de Catalunya" --destination "Sagrada Familia"
 
 Output:
 
@@ -62,7 +62,7 @@ Output:
 
 Input:
 
-    python3 green-route.py --origin "Carrer Ros de Olano 15, Barcelona" --destination "Little Fern, Barcelona"
+    python3 green-route.py --origin "Carrer Ros de Olano 15" --destination "Little Fern"
 
 Output:
 
@@ -79,7 +79,7 @@ Examples with Historical Data + Real-Time Data
 ----------
 Input:
 
-    python3 green-route.py --origin "Carrer Ros de Olano 15, Barcelona" --destination "Avinguda Diagonal 482, Barcelona" --real-time data/test.json
+    python3 green-route.py --origin "Carrer Ros de Olano 15" --destination "Avinguda Diagonal 482" --real-time data/test.json
 
 Output:
 
@@ -100,15 +100,15 @@ Output:
 Experiments with POIs in Barcelona
 ----------
 We consider the following 10 turistic *Points of Interest* (POIs) in Barcelona:
-1. Casa Batlló, Barcelona
-2. Plaça de Catalunya, Barcelona
-3. Platja del Bogatell, Barcelona
-4. Sagrada Familia, Barcelona
-5. Parc de la Ciutadella, Barcelona
-6. Platja de la Barceloneta, Barcelona
-7. Camp Nou, Barcelona
-8. Estadi Olimpic, Barcelona
-9. Recinte Modernista, Barcelona
-10. Turó de la Rovira, Barcelona
+1. Casa Batlló
+2. Plaça de Catalunya
+3. Platja del Bogatell
+4. Sagrada Familia
+5. Parc de la Ciutadella
+6. Platja de la Barceloneta
+7. Camp Nou
+8. Estadi Olimpic
+9. Recinte Modernista
+10. Turó de la Rovira
 
 ![pois](./img/pois.png)
