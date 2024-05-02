@@ -187,6 +187,7 @@ if __name__ == "__main__":
 
     if args.export_json is not None:
         json_data = {
+            'pollutant': args.pollutant,
             'origin': {
                 'address': args.origin,
                 'coordinates': origin_point.tolist()
