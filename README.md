@@ -80,7 +80,7 @@ Examples with Historical Data + Real-Time Data
 Input:
 
     python3 green-route.py --origin "Carrer Ros de Olano 15" --destination "Avinguda Diagonal 482" --real-time data/test.json
-wi
+
 Output:
 
     Running MAMP algorithm
