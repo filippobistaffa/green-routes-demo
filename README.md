@@ -80,7 +80,7 @@ Examples with Historical Data + Real-Time Data
 Input:
 
     python3 green-route.py --origin "Carrer Ros de Olano 15" --destination "Avinguda Diagonal 482" --real-time data/test.json
-
+wi
 Output:
 
     Running MAMP algorithm
@@ -99,7 +99,7 @@ Output:
 
 Experiments with POIs in Barcelona
 ----------
-We consider the following 10 turistic *Points of Interest* (POIs) in Barcelona:
+We consider the following 10 *Points of Interest* (POIs) in Barcelona:
 1. Casa Batlló
 2. Plaça de Catalunya
 3. Platja del Bogatell
@@ -113,4 +113,4 @@ We consider the following 10 turistic *Points of Interest* (POIs) in Barcelona:
 
 ![pois](./img/pois.png)
 
-We then consider all the ${10 \choose 2} = 45$ couples among the 10 above POIs and for each couple `(p1, p2)` we run `python3 green-route.py --origin p1 --destination p2`, considering historical data and NO<sub>2</sub> as the pollutant (see [`compute-routes-pois.sh`](compute-routes-pois.sh)). Results can be found in the [`jsons`](jsons) folder.
+We then consider all the ${10 \choose 2} = 45$ couples among the 10 above POIs and for each couple `(p1, p2)` we run `python3 green-route.py --origin p1 --destination p2`, considering historical data and NO<sub>2</sub> as the pollutant (see [`compute-routes-pois.sh`](compute-routes-pois.sh)). According to our [results](https://filippobistaffa.github.io/green-routes-demo/pois-routes-boxplots.html) (full data available in [`jsons`](jsons) folder), the median NO<sub>2</sub> exposure reduction along a green route is -7.23% with respect of the shortest route, while being only +3.86% longer.
